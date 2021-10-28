@@ -1,0 +1,158 @@
+{
+	"name": "hasflow",
+	"displayName": "HasFlow",
+	"publisher": "livebranchstudios",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/livebranch/vscode-hasflow.git"
+	},
+	"description": "Extention for HasFlow file schemas",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.61.0"
+	},
+	"categories": [
+		"Programming Languages"
+	],
+	"extensionDependencies": [
+		"hmarr.cel",
+		"redhat.vscode-yaml"
+	],
+	"main": "./out/extension.js",
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint . --ext .ts,.tsx",
+		"watch": "tsc -watch -p ./"
+	},
+	"devDependencies": {
+		"@types/node": "^12.12.0",
+		"@types/vscode": "^1.32.0",
+		"@typescript-eslint/eslint-plugin": "^4.16.0",
+		"@typescript-eslint/parser": "^4.16.0",
+		"eslint": "^7.21.0",
+		"typescript": "^4.4.3"
+	},
+	"activationEvents": [
+		"workspaceContains:**/site.yml",
+		"onLanguage:hasflow"
+	],
+	"contributes": {
+		"languages": [
+			{
+				"id": "hasflow.exposure",
+				"extensions": [".exp.yml.disabled"],
+				"language-configuration": "./language-configuration.json"
+			},
+			{
+				"id": "hasflow.seeder",
+				"extensions": [".seeder.yml.disabled"]
+			},
+			{
+				"id": "hasflow.class",
+				"extensions": [".class.yml.disabled"]
+			},
+			{
+				"id": "hasflow.template",
+				"extensions": [".template.yml.disabled"]
+			},
+			{
+				"id": "hasflow.routes",
+				"extensions": [".routes.yml.disabled"]
+			},
+			{
+				"id": "hasflow.policy",
+				"extensions": [".policy.yml.disabled"]
+			},
+			{
+				"id": "hasflow.external",
+				"extensions": [".external.yml.disabled"]
+			},
+			{
+				"id": "hasflow.etl",
+				"extensions": [".etl.yml.disabled"]
+			},
+			{
+				"id": "hasflow.migration",
+				"extensions": [".migration.yml.disabled"]
+			},
+			{
+				"id": "hasflow.interface",
+				"extensions": [".interface.yml.disabled"]
+			},
+			{
+				"id": "hasflow.site",
+				"extensions": [".site.yml.disabled"]
+			},
+			{
+				"id": "hasflow.provider",
+				"extensions": [".provider.yml.disabled"]
+			}
+		],
+		"grammars": [
+			{
+				"path": "./syntaxes/cel.injection.json",
+				"scopeName": "cel-expression.injection",
+				"injectTo": ["source.yaml"],
+				"embeddedLanguages": {
+					"meta.embedded.block.cel": "cel"
+				}
+			},
+			{
+				"language": "hasflow.exposure",
+				"path": "./syntaxes/yaml.tmLanguage.json",
+				"scopeName": "source.exposure.yaml"
+			}
+		],
+		"yamlValidation": [
+			{
+				"fileMatch": "*.exp.yml",
+				"url": "https://hasflow.org/schemas/exposure"
+			},
+			{
+				"fileMatch": "*.seed.yml",
+				"url": "https://hasflow.org/schemas/seeder"
+			},
+			{
+				"fileMatch": "*.class.yml",
+				"url": "https://hasflow.org/schemas/class"
+			},
+			{
+				"fileMatch": "*.template.yml",
+				"url": "https://hasflow.org/schemas/template"
+			},
+			{
+				"fileMatch": "*.routes.yml",
+				"url": "https://hasflow.org/schemas/routes"
+			},
+			{
+				"fileMatch": "*.policy.yml",
+				"url": "https://hasflow.org/schemas/policy"
+			},
+			{
+				"fileMatch": "*.external.yml",
+				"url": "https://hasflow.org/schemas/external"
+			},
+			{
+				"fileMatch": "*.etl.yml",
+				"url": "https://hasflow.org/schemas/etl"
+			},
+			{
+				"fileMatch": "*.migrate.yml",
+				"url": "https://hasflow.org/schemas/migration"
+			},
+			{
+				"fileMatch": "*.iface.yml",
+				"url": "https://hasflow.org/schemas/interface"
+			},
+			{
+				"fileMatch": "*.provider.yml",
+				"url": "https://hasflow.org/schemas/site"
+			},
+			{
+				"fileMatch": "*.provider.yml",
+				"url": "https://hasflow.org/schemas/provider"
+			}
+		]
+	}
+}

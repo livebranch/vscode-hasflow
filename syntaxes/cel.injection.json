@@ -1,0 +1,70 @@
+{
+	"scopeName": "cel-expression.injection",
+	"injectionSelector": "L:source",
+	"patterns": [
+		{
+			"include": "#cel-unquoted-name-value-pair"
+		},
+		{
+			"include": "#cel-quoted-name-value-pair"
+		},
+		{
+			"include": "#cel-multiline-name-value-pair"
+		}
+	],
+	"repository": {
+		"cel-unquoted-name-value-pair": {
+			"begin": "^\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)(:)\\s+[^\">][^$]*",
+			"beginCaptures": {
+				"1": { "name": "expression-identifier.yaml" },
+				"2": { "name": "variable.other.property" },
+				"3": { "name": "punctuation.separator.key-value.mapping.yaml" },
+				"4": { "name": "string.quoted.double.cel.start" }
+			},
+			"end": "(?=($))",
+			"endCaptures": {
+			  "1": { "name": "string.quoted.double.cel.end" }
+			},
+			"patterns": [
+				{
+					"include": "source.cel"
+				}
+			]
+		},
+		"cel-quoted-name-value-pair": {
+			"begin": "^\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)(:)\\s+(\")",
+			"beginCaptures": {
+				"1": { "name": "expression-identifier.yaml" },
+				"2": { "name": "variable.other.property" },
+				"3": { "name": "punctuation.separator.key-value.mapping.yaml" },
+				"4": { "name": "string.quoted.double.start" }
+			},
+			"end": "(\")",
+			"endCaptures": {
+			  "1": { "name": "string.quoted.double.end" }
+			},
+			"patterns": [
+				{
+					"include": "source.cel"
+				}
+			]
+		},
+		"cel-multiline-name-value-pair": {
+			"begin": "^\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)(:)\\s+>$",
+			"beginCaptures": {
+			  "1": { "name": "expression-identifier.yaml" },
+			  "2": { "name": "variable.other.property" },
+			  "3": { "name": "punctuation.separator.key-value.mapping.yaml" }
+			},
+			"end": "(?=(\\s*.+:(\\s|$)|\\s*.*:))",
+			"endCaptures": {
+			},
+			"patterns": [
+				{
+					"name": "source.cel",
+					"include": "source.cel"
+				}
+			]
+		}
+	}
+}
