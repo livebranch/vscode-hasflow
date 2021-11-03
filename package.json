@@ -1,39 +1,71 @@
 {
 	"name": "hasflow",
 	"displayName": "HasFlow",
+	"version": "0.0.5",
 	"publisher": "livebranchstudios",
+	"description": "Extension for HasFlow file schemas",
+	"author": {
+		"name": "LiveBranchStudios",
+		"email": "support@livebranchstudios.com.au"
+	},
+	"license": "MIT",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/livebranch/vscode-hasflow.git"
 	},
-	"description": "Extention for HasFlow file schemas",
-	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.61.0"
 	},
 	"categories": [
-		"Programming Languages"
+		"Programming Languages",
+		"Debuggers"
 	],
 	"extensionDependencies": [
 		"hmarr.cel",
 		"redhat.vscode-yaml"
 	],
-	"main": "./out/extension.js",
+	"main": "./dist/ext/extension.js",
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
+		"vscode:prepublish": "yarn run package-ext",
 		"compile": "tsc -p ./",
-		"lint": "eslint . --ext .ts,.tsx",
-		"watch": "tsc -watch -p ./"
+		"lint": "eslint src --ext ts",
+		"watch": "webpack --watch --devtool nosources-source-map --info-verbosity verbose --config ./build/extension.webpack.config.js",
+		"watch2": "tsc -watch -p ./",
+		"pretest": "yarn run compile && yarn run lint",
+		"test": "node ./out/test/runTest.js",
+		"package": "vsce package",
+		"publish": "vsce publish",
+		"package-ext": "webpack --mode production --config ./build/extension.webpack.config.js",
+		"compile-web": "webpack --devtool nosources-source-map --config ./build/web-extension.webpack.config.js",
+		"watch-web": "webpack --watch --devtool nosources-source-map --info-verbosity verbose --config ./build/web-extension.webpack.config.js",
+		"package-web": "webpack --mode production --config ./build/web-extension.webpack.config.js"
+	},
+	"dependencies": {
+		"await-notify": "1.0.1",
+		"child_process": "^1.0.2",
+		"vscode-debugadapter": "^1.50.0",
+		"vscode-debugprotocol": "^1.50.1"
 	},
 	"devDependencies": {
-		"@types/node": "^12.12.0",
-		"@types/vscode": "^1.32.0",
-		"@typescript-eslint/eslint-plugin": "^4.16.0",
-		"@typescript-eslint/parser": "^4.16.0",
-		"eslint": "^7.21.0",
-		"typescript": "^4.4.3"
+		"@types/vscode": "^1.61.0",
+		"@types/glob": "^7.2.0",
+		"@types/mocha": "^9.0.0",
+		"@types/node": "^14.14.37",
+		"eslint": "^8.1.0",
+		"@typescript-eslint/eslint-plugin": "^5.2.0",
+		"@typescript-eslint/parser": "^5.2.0",
+		"glob": "^7.2.0",
+		"mocha": "^9.1.3",
+		"typescript": "^4.4.4",
+		"vscode-debugadapter-testsupport": "^1.50.0",
+		"vsce": "^1.100.2",
+		"ts-loader": "^8.3.0",
+		"webpack": "^4.46.0",
+		"webpack-cli": "^3.3.12"
 	},
 	"activationEvents": [
+		"onDebugResolve:hasflow",
+		"onDebugDynamicConfigurations:hasflow",
 		"workspaceContains:**/site.yml",
 		"onLanguage:hasflow"
 	],
@@ -41,59 +73,85 @@
 		"languages": [
 			{
 				"id": "hasflow.exposure",
-				"extensions": [".exp.yml.disabled"],
+				"extensions": [
+					".exp.yml.disabled"
+				],
 				"language-configuration": "./language-configuration.json"
 			},
 			{
 				"id": "hasflow.seeder",
-				"extensions": [".seeder.yml.disabled"]
+				"extensions": [
+					".seeder.yml.disabled"
+				]
 			},
 			{
 				"id": "hasflow.class",
-				"extensions": [".class.yml.disabled"]
+				"extensions": [
+					".class.yml.disabled"
+				]
 			},
 			{
 				"id": "hasflow.template",
-				"extensions": [".template.yml.disabled"]
+				"extensions": [
+					".template.yml.disabled"
+				]
 			},
 			{
 				"id": "hasflow.routes",
-				"extensions": [".routes.yml.disabled"]
+				"extensions": [
+					".routes.yml.disabled"
+				]
 			},
 			{
 				"id": "hasflow.policy",
-				"extensions": [".policy.yml.disabled"]
+				"extensions": [
+					".policy.yml.disabled"
+				]
 			},
 			{
 				"id": "hasflow.external",
-				"extensions": [".external.yml.disabled"]
+				"extensions": [
+					".external.yml.disabled"
+				]
 			},
 			{
 				"id": "hasflow.etl",
-				"extensions": [".etl.yml.disabled"]
+				"extensions": [
+					".etl.yml.disabled"
+				]
 			},
 			{
 				"id": "hasflow.migration",
-				"extensions": [".migration.yml.disabled"]
+				"extensions": [
+					".migration.yml.disabled"
+				]
 			},
 			{
 				"id": "hasflow.interface",
-				"extensions": [".interface.yml.disabled"]
+				"extensions": [
+					".interface.yml.disabled"
+				]
 			},
 			{
 				"id": "hasflow.site",
-				"extensions": [".site.yml.disabled"]
+				"extensions": [
+					".site.yml.disabled"
+				]
 			},
 			{
 				"id": "hasflow.provider",
-				"extensions": [".provider.yml.disabled"]
+				"extensions": [
+					".provider.yml.disabled"
+				]
 			}
 		],
 		"grammars": [
 			{
 				"path": "./syntaxes/cel.injection.json",
 				"scopeName": "cel-expression.injection",
-				"injectTo": ["source.yaml"],
+				"injectTo": [
+					"source.yaml"
+				],
 				"embeddedLanguages": {
 					"meta.embedded.block.cel": "cel"
 				}
@@ -112,6 +170,10 @@
 			{
 				"fileMatch": "*.seed.yml",
 				"url": "https://hasflow.org/schemas/seeder"
+			},
+			{
+				"fileMatch": "*.process.yml",
+				"url": "https://hasflow.org/schemas/processor"
 			},
 			{
 				"fileMatch": "*.class.yml",
@@ -146,12 +208,45 @@
 				"url": "https://hasflow.org/schemas/interface"
 			},
 			{
-				"fileMatch": "*.provider.yml",
+				"fileMatch": "site.yml",
 				"url": "https://hasflow.org/schemas/site"
 			},
 			{
 				"fileMatch": "*.provider.yml",
 				"url": "https://hasflow.org/schemas/provider"
+			}
+		],
+		"debuggers": [
+			{
+				"type": "hasflow",
+				"languages": [
+					"yaml"
+				],
+				"label": "HasFlow",
+				"program": "./out/debugAdapter.js",
+				"runtime": "node",
+				"configurationAttributes": {
+					"launch": {
+						"required": [],
+						"properties": {
+							"program": {
+								"type": "string",
+								"description": "Absolute path to debugger.",
+								"default": "/usr/local/bin/hasflow"
+							  }			
+						}
+					}
+				},
+				"initialConfigurations": [
+					{
+						"name": "Launch HasFlow Application",
+						"type": "hasflow",
+						"request": "launch",
+						"debugger": "/usr/local/bin/hasflow"
+					}
+				],
+				"configurationSnippets": [],
+				"variables": {}
 			}
 		]
 	}

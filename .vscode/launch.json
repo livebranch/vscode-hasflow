@@ -6,17 +6,38 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Run Extension",
-			"type": "extensionHost",
+			"name": "Server",
+			"type": "node",
 			"request": "launch",
-			"runtimeExecutable": "${execPath}",
+			"cwd": "${workspaceFolder}",
+			// "program": "/usr/local/bin/hasflow",
+			"program": "${workspaceFolder}/src/debugAdapter.ts",
 			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
+				"--server=4711"
 			],
 			"outFiles": [
 				"${workspaceFolder}/out/**/*.js"
 			],
+			"preLaunchTask": "npm: compile"
+		},
+		{
+			"name": "Extension",
+			"type": "extensionHost",
+			"request": "launch",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"${workspaceFolder}/sampleWorkspace"
+			],
+			"outFiles": [
+				"${workspaceFolder}/dist/ext/**/*.js"
+			],
 			"preLaunchTask": "npm: watch"
 		}
-	]
+	],
+	"compounds": [
+		{
+			"name": "Extension + Server",
+			"configurations": [ "Extension", "Server" ]
+		}
+	]	
 }
