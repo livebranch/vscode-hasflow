@@ -23,6 +23,10 @@ import {
 	DebugAdapterDescriptor,
 	DebugAdapterServer,
 	Uri,
+	Task,
+	tasks,
+	ShellExecution,
+	TaskScope,
 } from 'vscode';
 import { FileAccessor } from './hasflowRuntime';
 
@@ -30,9 +34,6 @@ import { FileAccessor } from './hasflowRuntime';
 export function activate(context: ExtensionContext) {
 
 	var factory = new HasflowDebugAdapterServerDescriptorFactory();
-
-	// debug adapters can be run in different ways by using a vscode.DebugAdapterDescriptorFactory:
-	window.showInformationMessage("Activating Hasflow!");
 
 	// register a configuration provider for 'hasflow' debug type
 	const provider = new HasflowConfigurationProvider();
@@ -55,8 +56,6 @@ export function activate(context: ExtensionContext) {
 			return debug.startDebugging(workspaceFolder, config);
 		})
 	);
-
-	window.showInformationMessage("Finshed activating Hasflow!");
 }
 
 class HasflowConfigurationProvider implements DebugConfigurationProvider {
@@ -67,8 +66,6 @@ class HasflowConfigurationProvider implements DebugConfigurationProvider {
 	 */
 	resolveDebugConfiguration(folder: WorkspaceFolder | undefined, config: DebugConfiguration, token?: CancellationToken): ProviderResult<DebugConfiguration> {
 
-		window.showInformationMessage("Resolving debug config");
-		
 		// if launch.json is missing or empty
 		if (!config.type && !config.request && !config.name) {
 			const editor = window.activeTextEditor;
@@ -77,15 +74,12 @@ class HasflowConfigurationProvider implements DebugConfigurationProvider {
 				config.name = 'Launch';
 				config.request = 'launch';
 				config.debugger = 'hasflow';
-				config.stopOnEntry = true;
+				config.bundlePath = `${folder?.uri.path as string}/package.zip`;
 			}
 		}
 
 		//config.console = "_attach";
 		config.debugServer = null;
-
-		window.showInformationMessage("Finished resolving debug config:");
-		window.showInformationMessage(JSON.stringify(config));
 
 		return config;
 	}
@@ -97,7 +91,21 @@ class HasflowDebugAdapterServerDescriptorFactory implements DebugAdapterDescript
 
 	createDebugAdapterDescriptor(session: DebugSession, executable: DebugAdapterExecutable | undefined): ProviderResult<DebugAdapterDescriptor> {
 
-		window.showInformationMessage("Starting Hasflow Server!");
+		var task = new Task(
+			{ type: 'shell', task: 'package' },
+			TaskScope.Global,
+			"Hasflow Package",
+			"hasflow",
+			new ShellExecution('zip -FSr ${workspaceFolder}/package.zip *')
+		);
+
+		tasks.executeTask(task).then(() => {
+			// window.showInformationMessage("Package package.zip built!");
+		})
+
+		if (session.configuration.bundlePath == "") {
+			session.configuration.bundlePath = `${session.workspaceFolder?.uri.path as String}/package.zip`
+		}
 
 		if (!this.server) {
 			// start listening on a random port

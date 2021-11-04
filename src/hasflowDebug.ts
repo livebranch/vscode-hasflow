@@ -25,6 +25,8 @@ interface ILaunchRequestArguments extends DebugProtocol.LaunchRequestArguments {
 	debugger: string;
 	/** environment variables to pass. */
 	env: object;
+	/** environment variables to pass. */
+	bundlePath: string;
 	/** Automatically stop target after launch. If not specified, target does not stop. */
 	stopOnEntry?: boolean;
 	/** enable logging the Debug Adapter Protocol */
@@ -222,6 +224,10 @@ export class HasflowDebugSession extends LoggingDebugSession {
 			);
 		} else {
 			env = {}
+		}
+
+		if (env["BUNDLE_PATH"] == undefined) {
+			env["BUNDLE_PATH"] = args.bundlePath
 		}
 
 		// make sure to 'Stop' the buffered logging if 'trace' is not set

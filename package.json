@@ -242,7 +242,8 @@
 						"name": "Launch HasFlow Application",
 						"type": "hasflow",
 						"request": "launch",
-						"debugger": "/usr/local/bin/hasflow"
+						"debugger": "/usr/local/bin/hasflow",
+						"preLaunchTask": "Hasflow Create Bundle"
 					}
 				],
 				"configurationSnippets": [],
