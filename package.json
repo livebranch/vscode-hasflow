@@ -43,23 +43,24 @@
 	"dependencies": {
 		"await-notify": "1.0.1",
 		"child_process": "^1.0.2",
+		"tree-kill": "^1.2.2",
 		"vscode-debugadapter": "^1.50.0",
 		"vscode-debugprotocol": "^1.50.1"
 	},
 	"devDependencies": {
-		"@types/vscode": "^1.61.0",
 		"@types/glob": "^7.2.0",
 		"@types/mocha": "^9.0.0",
 		"@types/node": "^14.14.37",
-		"eslint": "^8.1.0",
+		"@types/vscode": "^1.61.0",
 		"@typescript-eslint/eslint-plugin": "^5.2.0",
 		"@typescript-eslint/parser": "^5.2.0",
+		"eslint": "^8.1.0",
 		"glob": "^7.2.0",
 		"mocha": "^9.1.3",
-		"typescript": "^4.4.4",
-		"vscode-debugadapter-testsupport": "^1.50.0",
-		"vsce": "^1.100.2",
 		"ts-loader": "^8.3.0",
+		"typescript": "^4.4.4",
+		"vsce": "^1.100.2",
+		"vscode-debugadapter-testsupport": "^1.50.0",
 		"webpack": "^4.46.0",
 		"webpack-cli": "^3.3.12"
 	},
@@ -168,6 +169,10 @@
 				"url": "https://hasflow.org/schemas/exposure"
 			},
 			{
+				"fileMatch": "*.iface.yml",
+				"url": "https://hasflow.org/schemas/interface"
+			},
+			{
 				"fileMatch": "*.seed.yml",
 				"url": "https://hasflow.org/schemas/seeder"
 			},
@@ -233,7 +238,7 @@
 								"type": "string",
 								"description": "Absolute path to debugger.",
 								"default": "/usr/local/bin/hasflow"
-							  }			
+							}
 						}
 					}
 				},

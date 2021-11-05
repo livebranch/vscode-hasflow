@@ -114,6 +114,7 @@ export class HasflowDebugSession extends LoggingDebugSession {
 			this.sendEvent(e);
 		});
 		this._runtime.on('end', () => {
+			this._runtime.end()
 			this.sendEvent(new TerminatedEvent());
 		});
 	}
@@ -270,6 +271,10 @@ export class HasflowDebugSession extends LoggingDebugSession {
 			breakpoints: actualBreakpoints
 		};
 		this.sendResponse(response);
+	}
+
+    protected disconnectRequest(response: DebugProtocol.DisconnectResponse, args: DebugProtocol.DisconnectArguments, request?: DebugProtocol.Request): void {
+		this._runtime.end();
 	}
 
 	protected breakpointLocationsRequest(response: DebugProtocol.BreakpointLocationsResponse, args: DebugProtocol.BreakpointLocationsArguments, request?: DebugProtocol.Request): void {

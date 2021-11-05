@@ -4,6 +4,8 @@
 
 import { EventEmitter } from 'events';
 import { ChildProcess, spawn, SpawnOptionsWithoutStdio } from 'child_process';;
+import * as kill from 'tree-kill';
+import * as fs from 'fs';
 
 export interface FileAccessor {
 	readFile(path: string): Promise<string>;
@@ -68,6 +70,8 @@ export class HasflowRuntime extends EventEmitter {
 		return this._sourceFile;
 	}
 
+	private _bundlePath: string = '';
+
 	private variables = new Map<string, IRuntimeVariable>();
 
 	// the contents (= lines) of the one and only file
@@ -123,6 +127,8 @@ export class HasflowRuntime extends EventEmitter {
 			options = {}
 			options.env = Object.assign({}, process.env, env)
 			options.shell = true
+
+			this._bundlePath = options.env["BUNDLE_PATH"] || ''
 
 			this.debugProcess = spawn(program, [], options);
 
@@ -456,6 +462,22 @@ export class HasflowRuntime extends EventEmitter {
 		}
 
 		return instructions;
+	}
+
+	public end(): void {
+		if (this.debugProcess != null) {
+			kill(this.debugProcess.pid, (err) => {
+				if (err) {
+					// logger(`Error killing process ${this. .pid}: ${err}`);
+				}
+				// resolve();
+			});
+			if (this._bundlePath != "") {
+				fs.unlink(this._bundlePath, () => {
+					// Do nothing
+				})
+			}
+		}
 	}
 
 	// private methods

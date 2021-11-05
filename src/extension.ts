@@ -5,6 +5,8 @@
 'use strict';
 
 import * as Net from 'net';
+import * as os from 'os';
+import * as crypto from 'crypto';
 import { HasflowDebugSession } from './hasflowDebug';
 import { 
 	workspace,
@@ -74,7 +76,7 @@ class HasflowConfigurationProvider implements DebugConfigurationProvider {
 				config.name = 'Launch';
 				config.request = 'launch';
 				config.debugger = 'hasflow';
-				config.bundlePath = `${folder?.uri.path as string}/package.zip`;
+				config.bundlePath = `${os.tmpdir()}/package-${crypto.randomBytes(4).readUInt32LE(0)}.zip`;
 			}
 		}
 
@@ -91,21 +93,21 @@ class HasflowDebugAdapterServerDescriptorFactory implements DebugAdapterDescript
 
 	createDebugAdapterDescriptor(session: DebugSession, executable: DebugAdapterExecutable | undefined): ProviderResult<DebugAdapterDescriptor> {
 
+		if (session.configuration.bundlePath == "") {
+			session.configuration.bundlePath = `${os.tmpdir()}/package-${crypto.randomBytes(4).readUInt32LE(0)}.zip`
+		}
+
 		var task = new Task(
 			{ type: 'shell', task: 'package' },
 			TaskScope.Global,
 			"Hasflow Package",
 			"hasflow",
-			new ShellExecution('zip -FSr ${workspaceFolder}/package.zip *')
+			new ShellExecution(`zip -FSr ${session.configuration.bundlePath} *`)
 		);
 
 		tasks.executeTask(task).then(() => {
 			// window.showInformationMessage("Package package.zip built!");
 		})
-
-		if (session.configuration.bundlePath == "") {
-			session.configuration.bundlePath = `${session.workspaceFolder?.uri.path as String}/package.zip`
-		}
 
 		if (!this.server) {
 			// start listening on a random port
