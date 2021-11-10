@@ -234,21 +234,39 @@
 					"launch": {
 						"required": [],
 						"properties": {
-							"program": {
+							"debugger": {
 								"type": "string",
 								"description": "Absolute path to debugger.",
-								"default": "/usr/local/bin/hasflow"
+								"default": "hasflow"
+							},
+							"env": {
+								"type": "object",
+								"description": "Environment variables to pass to debugger.",
+								"default": {}
+							},
+							"bundlePath": {
+								"type": "string",
+								"description": "Absolute path to debugger.",
+								"default": ""
+							},
+							"seeders": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								},
+								"description": "A list of seeder tags to execute.",
+								"default": []
 							}
 						}
 					}
 				},
 				"initialConfigurations": [
 					{
-						"name": "Launch HasFlow Application",
+						"name": "Launch",
 						"type": "hasflow",
 						"request": "launch",
-						"debugger": "/usr/local/bin/hasflow",
-						"preLaunchTask": "Hasflow Create Bundle"
+						"debugger": "hasflow",
+						"seeders": []
 					}
 				],
 				"configurationSnippets": [],

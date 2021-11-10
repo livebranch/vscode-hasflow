@@ -6,7 +6,13 @@
 			"include": "#cel-unquoted-name-value-pair"
 		},
 		{
+			"include": "#cel-empty-quoted-name-value-pair"
+		},
+		{
 			"include": "#cel-quoted-name-value-pair"
+		},
+		{
+			"include": "#cel-empty-single-quoted-name-value-pair"
 		},
 		{
 			"include": "#cel-single-quoted-name-value-pair"
@@ -34,6 +40,21 @@
 				}
 			]
 		},
+		"cel-empty-quoted-name-value-pair": {
+			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)(:)\\s+(\"'')",
+			"beginCaptures": {
+				"1": { "name": "keyword.control" },
+				"2": { "name": "variable.other.property" },
+				"3": { "name": "punctuation.separator.key-value.mapping.yaml" },
+				"4": { "name": "string.quoted.double.start" }
+			},
+			"end": "(\")",
+			"endCaptures": {
+			  "1": { "name": "string.quoted.double.end" }
+			},
+			"patterns": [
+			]
+		},
 		"cel-quoted-name-value-pair": {
 			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)(:)\\s+(\")",
 			"beginCaptures": {
@@ -50,6 +71,21 @@
 				{
 					"include": "source.cel"
 				}
+			]
+		},
+		"cel-empty-single-quoted-name-value-pair": {
+			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)(:)\\s+('\"\")",
+			"beginCaptures": {
+				"1": { "name": "keyword.control" },
+				"2": { "name": "variable.other.property" },
+				"3": { "name": "punctuation.separator.key-value.mapping.yaml" },
+				"4": { "name": "string.quoted.double.start" }
+			},
+			"end": "(')",
+			"endCaptures": {
+			  "1": { "name": "string.quoted.double.end" }
+			},
+			"patterns": [
 			]
 		},
 		"cel-single-quoted-name-value-pair": {
@@ -77,7 +113,7 @@
 			  "2": { "name": "variable.other.property" },
 			  "3": { "name": "punctuation.separator.key-value.mapping.yaml" }
 			},
-			"end": "(?=(\\s*[a-zA-Z0-9_]+:(\\s|$)|\\s*[a-zA-Z0-9_]*:))",
+			"end": "(?=(\\s*[a-zA-Z0-9_]+:(\\s|$)|\\s*[a-zA-Z0-9_]*:|\\s*#.+))",
 			"endCaptures": {
 			},
 			"patterns": [

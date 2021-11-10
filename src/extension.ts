@@ -68,19 +68,33 @@ class HasflowConfigurationProvider implements DebugConfigurationProvider {
 	 */
 	resolveDebugConfiguration(folder: WorkspaceFolder | undefined, config: DebugConfiguration, token?: CancellationToken): ProviderResult<DebugConfiguration> {
 
-		// if launch.json is missing or empty
-		if (!config.type && !config.request && !config.name) {
-			const editor = window.activeTextEditor;
-			if (editor && editor.document.languageId === 'yaml') {
-				config.type = 'hasflow';
-				config.name = 'Launch';
-				config.request = 'launch';
-				config.debugger = 'hasflow';
-				config.bundlePath = `${os.tmpdir()}/package-${crypto.randomBytes(4).readUInt32LE(0)}.zip`;
+		if (!config.bundlePath) {
+			config.bundlePath = `${os.tmpdir()}/package-${crypto.randomBytes(4).readUInt32LE(0)}.zip`
+
+			var prelaunchTask = new Task(
+				{ type: 'shell', task: 'package' },
+				TaskScope.Global,
+				"Hasflow Package",
+				"hasflow",
+				new ShellExecution(`zip -FSr ${config.bundlePath} * -x "*node_modules*"`)
+			);
+
+			tasks.executeTask(prelaunchTask)
+
+			// if launch.json is missing or empty
+			if (!config.type && !config.request && !config.name) {
+				const editor = window.activeTextEditor;
+				if (editor && editor.document.languageId === 'yaml') {
+					config.type = 'hasflow';
+					config.name = 'Launch';
+					config.request = 'launch';
+					config.debugger = 'hasflow';
+					config.seeders = [];
+					// Ideally we would register the task and call it as a prelaunch task
+					// config.preLaunchTask = prelaunchTask.name;
+				}
 			}
 		}
-
-		//config.console = "_attach";
 		config.debugServer = null;
 
 		return config;
@@ -93,22 +107,6 @@ class HasflowDebugAdapterServerDescriptorFactory implements DebugAdapterDescript
 
 	createDebugAdapterDescriptor(session: DebugSession, executable: DebugAdapterExecutable | undefined): ProviderResult<DebugAdapterDescriptor> {
 
-		if (session.configuration.bundlePath == "") {
-			session.configuration.bundlePath = `${os.tmpdir()}/package-${crypto.randomBytes(4).readUInt32LE(0)}.zip`
-		}
-
-		var task = new Task(
-			{ type: 'shell', task: 'package' },
-			TaskScope.Global,
-			"Hasflow Package",
-			"hasflow",
-			new ShellExecution(`zip -FSr ${session.configuration.bundlePath} *`)
-		);
-
-		tasks.executeTask(task).then(() => {
-			// window.showInformationMessage("Package package.zip built!");
-		})
-
 		if (!this.server) {
 			// start listening on a random port
 			this.server = Net.createServer(socket => {
@@ -120,8 +118,9 @@ class HasflowDebugAdapterServerDescriptorFactory implements DebugAdapterDescript
 
 		window.showInformationMessage("Listening on " + (this.server.address() as Net.AddressInfo).port);
 
-		// make VS Code connect to debug server
-		return new DebugAdapterServer((this.server.address() as Net.AddressInfo).port);
+		var server = this.server
+
+		return new DebugAdapterServer((server.address() as Net.AddressInfo).port);
 	}
 
 	dispose() {

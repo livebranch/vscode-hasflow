@@ -25,8 +25,10 @@ interface ILaunchRequestArguments extends DebugProtocol.LaunchRequestArguments {
 	debugger: string;
 	/** environment variables to pass. */
 	env: object;
-	/** environment variables to pass. */
+	/** path to bundle zip. */
 	bundlePath: string;
+	/** Seeder Tags */
+	seeders: Array<string>;
 	/** Automatically stop target after launch. If not specified, target does not stop. */
 	stopOnEntry?: boolean;
 	/** enable logging the Debug Adapter Protocol */
@@ -112,6 +114,9 @@ export class HasflowDebugSession extends LoggingDebugSession {
 			e.body.line = this.convertDebuggerLineToClient(line);
 			e.body.column = this.convertDebuggerColumnToClient(column);
 			this.sendEvent(e);
+		});
+		this._runtime.on('message', (text) => {
+			this.sendEvent(new OutputEvent(`${text}\n`));
 		});
 		this._runtime.on('end', () => {
 			this._runtime.end()
@@ -231,6 +236,10 @@ export class HasflowDebugSession extends LoggingDebugSession {
 			env["BUNDLE_PATH"] = args.bundlePath
 		}
 
+		if (args.seeders.length > 0) {
+			env["SEEDER_TAGS"] = args.seeders.join(" ")
+		}
+
 		// make sure to 'Stop' the buffered logging if 'trace' is not set
 		logger.setup(args.trace ? Logger.LogLevel.Verbose : Logger.LogLevel.Stop, false);
 
@@ -240,10 +249,10 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		// start the program in the runtime
 		await this._runtime.start(args.debugger, env, !!args.stopOnEntry, !args.noDebug).then(() => {
 			this.sendResponse(response);
-		}).catch(() => {
+		}).catch((error) => {
 			this.sendErrorResponse(response, {
 				id: 1001,
-				format: `compile error: some fake error.`,
+				format: `compile error: some fake error. ${error}`,
 				showUser: args.compileError === 'show' ? true : (args.compileError === 'hide' ? false : undefined)
 			});
 		});

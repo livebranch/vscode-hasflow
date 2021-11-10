@@ -122,13 +122,22 @@ export class HasflowRuntime extends EventEmitter {
 	 */
 	public async start(program: string, env: NodeJS.Dict<string>, stopOnEntry: boolean, debug: boolean): Promise<void> {
 
-		return new Promise((resolve, reject) => {
+		return new Promise(async (resolve, reject) => {
 			var options : SpawnOptionsWithoutStdio
 			options = {}
 			options.env = Object.assign({}, process.env, env)
 			options.shell = true
+			if (!options.env["ORIGINS_ALLOWED"]) {
+				options.env["ORIGINS_ALLOWED"] = "*"
+			}
 
 			this._bundlePath = options.env["BUNDLE_PATH"] || ''
+
+			// Wait for bundle to be built
+			const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+			while (!fs.existsSync(this._bundlePath)) {
+				await delay(1000) /// waiting 1 second.
+			}
 
 			this.debugProcess = spawn(program, [], options);
 
@@ -144,7 +153,15 @@ export class HasflowRuntime extends EventEmitter {
 				this.debugProcess.stdout.pipe(process.stdout)
 				this.debugProcess.stdout.on('data', (chunk) => {
 					const str = chunk.toString();
-					this.sendEvent('output', str, 'filePath', 3, 2);
+
+					const regex = /^Error\[(.*)\]\:(.*)\|(.*)\n/m;
+					const found = str.match(regex);
+					
+					if (found === null) {
+						this.sendEvent('message', str);
+					} else {
+						this.sendEvent('output', found[2] + ' --- ' + found[3], '/' + found[1], 1, 1);
+					}
 				});
 			}
 
