@@ -61,6 +61,7 @@ Net.createServer((socket) => {
 	socket.on('end', () => {
 		console.error('>> client connection closed\n');
 	});
+
 	const session = new HasflowDebugSession(fsAccessor);
 	session.setRunAsServer(true);
 	session.start(socket, socket);

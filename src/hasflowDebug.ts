@@ -23,6 +23,8 @@ import { Subject } from 'await-notify';
 interface ILaunchRequestArguments extends DebugProtocol.LaunchRequestArguments {
 	/** An absolute path to the hasflow debugger. */
 	debugger: string;
+	/** An absolute path to the hasflow debugger. */
+	program: string;
 	/** environment variables to pass. */
 	env: object;
 	/** path to bundle zip. */
@@ -46,6 +48,7 @@ export class HasflowDebugSession extends LoggingDebugSession {
 
 	// a Hasflow runtime (or debugger)
 	private _runtime: HasflowRuntime;
+	private _projectRoot: string = "";
 
 	private _variableHandles = new Handles<'locals' | 'globals' | IRuntimeVariable>();
 
@@ -103,14 +106,13 @@ export class HasflowDebugSession extends LoggingDebugSession {
 			this.sendEvent(new BreakpointEvent('changed', { verified: bp.verified, id: bp.id } as DebugProtocol.Breakpoint));
 		});
 		this._runtime.on('output', (text, filePath, line, column) => {
-			const e: DebugProtocol.OutputEvent = new OutputEvent(`${text}\n`);
+			const e: DebugProtocol.OutputEvent = new OutputEvent(`${text}\n`, 'stderr');
 
 			if (text === 'start' || text === 'startCollapsed' || text === 'end') {
 				e.body.group = text;
 				e.body.output = `group-${text}\n`;
 			}
-
-			e.body.source = this.createSource(filePath);
+			e.body.source = this.createSource(this._projectRoot + '/' + filePath);
 			e.body.line = this.convertDebuggerLineToClient(line);
 			e.body.column = this.convertDebuggerColumnToClient(column);
 			this.sendEvent(e);
@@ -118,10 +120,20 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		this._runtime.on('message', (text) => {
 			this.sendEvent(new OutputEvent(`${text}\n`));
 		});
+		this._runtime.on('staged', () => {
+			this.sendEvent(new OutputEvent(`Ready for requests\n`, 'stdout'));
+		});
+		this._runtime.on('terminatedError', (text) => {
+			this.sendEvent(new OutputEvent(`${text}\n`, 'stderr'));
+			this.sendEvent(new TerminatedEvent());
+		});
 		this._runtime.on('end', () => {
 			this._runtime.end()
 			this.sendEvent(new TerminatedEvent());
 		});
+
+		// Grab focus (got to be a better way?)
+		this.sendEvent(new OutputEvent(``, 'stderr'))
 	}
 
 	/**
@@ -231,6 +243,8 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		} else {
 			env = {}
 		}
+
+		this._projectRoot = args.program
 
 		if (env["BUNDLE_PATH"] == undefined) {
 			env["BUNDLE_PATH"] = args.bundlePath
@@ -370,7 +384,7 @@ export class HasflowDebugSession extends LoggingDebugSession {
 
 		response.body = {
 			stackFrames: stk.frames.map((f, ix) => {
-				const sf: DebugProtocol.StackFrame = new StackFrame(f.index, f.name, this.createSource(f.file), this.convertDebuggerLineToClient(f.line));
+				const sf: DebugProtocol.StackFrame = new StackFrame(f.index, f.name, this.createSource(this._projectRoot + '/' + f.file), this.convertDebuggerLineToClient(f.line));
 				if (typeof f.column === 'number') {
 					sf.column = this.convertDebuggerColumnToClient(f.column);
 				}

@@ -146,21 +146,57 @@ export class HasflowRuntime extends EventEmitter {
 				this.debugProcess.stderr.on('data', (chunk) => {
 					const str = chunk.toString();
 
-					this.sendEvent('output', str, 'filePath', 3, 2);
+					this.sendEvent('terminatedError', str);
 				});
 			}
 			if (this.debugProcess.stdout !== null) {
+
 				this.debugProcess.stdout.pipe(process.stdout)
 				this.debugProcess.stdout.on('data', (chunk) => {
 					const str = chunk.toString();
 
-					const regex = /^Error\[(.*)\]\:(.*)\|(.*)\n/m;
+					const regex = /^Error\[(.*)\:\:(.*)\]\:(.*)\|(.*)\n(.*)/m;
 					const found = str.match(regex);
 					
 					if (found === null) {
-						this.sendEvent('message', str);
+						if (str.startsWith('Staged')) {
+							this.sendEvent('staged');
+						} else {
+							this.sendEvent('message', str);
+						}
 					} else {
-						this.sendEvent('output', found[2] + ' --- ' + found[3], '/' + found[1], 1, 1);
+						// Split found[2] (json path) by '.', search source file for occurrences - get line number
+					
+						this.fileAccessor.readFile(found[1]).then((source) => {
+							var sourceLines = source.split("\n")
+							var elements = found[2].split('.')
+							var activeElement = 0
+							var lineMatch = 0
+							var columnMatch = 0
+							for (let index = 0; index < sourceLines.length; index++) {
+								const line = sourceLines[index];
+								var elementEscaped = elements[activeElement].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+								const found = line.match("^[\\s]*" + elementEscaped + ":")
+								if (found !== null) {
+									lineMatch = index;
+									if (activeElement >= elements.length - 1) {
+										// Find the column
+										columnMatch = line.indexOf(elements[activeElement]) + elements[activeElement].length + 1;
+										break;
+									}
+									activeElement++;
+								}
+							}
+
+							this.sendEvent('output', found[3] + ' --- ' + found[4] + '+++' + found[5], found[1], lineMatch, columnMatch);
+						}).catch(reason => {
+							this.sendEvent('message', 'Failed to source file: ' + found[1] + reason);
+						})
+
+						// Find how many dots in found[5], use as column
+						// Attempt to pretty up errors						
+						// this.sendEvent('output', found[2] + '|||' + found[3] + '---' + found[4] + '+++' + found[5], found[1], 1, 1);
 					}
 				});
 			}
@@ -181,7 +217,7 @@ export class HasflowRuntime extends EventEmitter {
 			});
 
 			this.debugProcess.on('close', (code) => {
-				this.sendEvent('output', 'Process exiting with code: ' + code, 'filePath', 3, 2);
+				this.sendEvent('message', 'Process exiting with code: ' + code);
 				resolve();
 			});
 

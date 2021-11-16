@@ -29,6 +29,7 @@ import {
 	tasks,
 	ShellExecution,
 	TaskScope,
+	TaskRevealKind,
 } from 'vscode';
 import { FileAccessor } from './hasflowRuntime';
 
@@ -58,6 +59,7 @@ export function activate(context: ExtensionContext) {
 			return debug.startDebugging(workspaceFolder, config);
 		})
 	);
+	
 }
 
 class HasflowConfigurationProvider implements DebugConfigurationProvider {
@@ -70,17 +72,26 @@ class HasflowConfigurationProvider implements DebugConfigurationProvider {
 
 		if (!config.bundlePath) {
 			config.bundlePath = `${os.tmpdir()}/package-${crypto.randomBytes(4).readUInt32LE(0)}.zip`
+			config.program = folder?.uri.path
 
 			var prelaunchTask = new Task(
-				{ type: 'shell', task: 'package' },
+				{ type: 'shell', task: 'package', isBackground: true, },
 				TaskScope.Global,
 				"Hasflow Package",
 				"hasflow",
 				new ShellExecution(`zip -FSr ${config.bundlePath} * -x "*node_modules*"`)
 			);
+			if (!prelaunchTask.presentationOptions) {
+				prelaunchTask.presentationOptions = {}
+			}
+			prelaunchTask.presentationOptions.focus = false
+			prelaunchTask.presentationOptions.reveal = TaskRevealKind.Silent
 
 			tasks.executeTask(prelaunchTask)
 
+			// Focus the debug window
+			commands.executeCommand('workbench.debug.action.toggleRepl')
+			
 			// if launch.json is missing or empty
 			if (!config.type && !config.request && !config.name) {
 				const editor = window.activeTextEditor;
@@ -116,8 +127,6 @@ class HasflowDebugAdapterServerDescriptorFactory implements DebugAdapterDescript
 			}).listen(0);
 		}
 
-		window.showInformationMessage("Listening on " + (this.server.address() as Net.AddressInfo).port);
-
 		var server = this.server
 
 		return new DebugAdapterServer((server.address() as Net.AddressInfo).port);
@@ -131,10 +140,20 @@ class HasflowDebugAdapterServerDescriptorFactory implements DebugAdapterDescript
 }
 
 const workspaceFileAccessor: FileAccessor = {
+
 	async readFile(path: string) {
+
+		var workspaceFolder : WorkspaceFolder | undefined;
+		if (window.activeTextEditor) {
+			workspaceFolder = workspace.getWorkspaceFolder(window.activeTextEditor.document.uri);
+		}
+
 		try {
-			const uri = Uri.file(path);
-			const bytes = await workspace.fs.readFile(uri);
+			if (workspaceFolder) {
+				path = workspaceFolder.uri.path + '/' + path;
+			}
+			var uri = Uri.file(path);
+			var bytes = await workspace.fs.readFile(uri);
 			const contents = Buffer.from(bytes).toString('utf8');
 			return contents;
 		} catch(e) {
