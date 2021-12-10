@@ -120,7 +120,7 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		this._runtime.on('message', (text) => {
 			this.sendEvent(new OutputEvent(`${text}\n`));
 		});
-		this._runtime.on('staged', () => {
+		this._runtime.on('ready', () => {
 			this.sendEvent(new OutputEvent(`Ready for requests\n`, 'stdout'));
 		});
 		this._runtime.on('terminatedError', (text) => {

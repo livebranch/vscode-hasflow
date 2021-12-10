@@ -165,7 +165,7 @@
 		],
 		"yamlValidation": [
 			{
-				"fileMatch": "*.exp.yml",
+				"fileMatch": "*.item.yml",
 				"url": "https://hasflow.org/schemas/exposure"
 			},
 			{
@@ -179,6 +179,10 @@
 			{
 				"fileMatch": "*.process.yml",
 				"url": "https://hasflow.org/schemas/processor"
+			},
+			{
+				"fileMatch": "*.service.yml",
+				"url": "https://hasflow.org/schemas/service"
 			},
 			{
 				"fileMatch": "*.class.yml",

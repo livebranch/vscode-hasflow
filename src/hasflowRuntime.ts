@@ -159,8 +159,8 @@ export class HasflowRuntime extends EventEmitter {
 					const found = str.match(regex);
 					
 					if (found === null) {
-						if (str.startsWith('Staged')) {
-							this.sendEvent('staged');
+						if (str.startsWith('Ready') || str.includes('\nReady')) {
+							this.sendEvent('ready');
 						} else {
 							this.sendEvent('message', str);
 						}
