@@ -250,6 +250,8 @@ export class HasflowDebugSession extends LoggingDebugSession {
 			env["BUNDLE_PATH"] = args.bundlePath
 		}
 
+		env["HASFLOW_PROJECT_ROOT"] = this._projectRoot
+
 		if (args.seeders.length > 0) {
 			env["SEEDER_TAGS"] = args.seeders.join(" ")
 		}
