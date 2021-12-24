@@ -90,7 +90,7 @@ class HasflowConfigurationProvider implements DebugConfigurationProvider {
 			tasks.executeTask(prelaunchTask)
 
 			// Focus the debug window
-			commands.executeCommand('workbench.debug.action.toggleRepl')
+			commands.executeCommand('workbench.debug.action.focusRepl')
 			
 			// if launch.json is missing or empty
 			if (!config.type && !config.request && !config.name) {
