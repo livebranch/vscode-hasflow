@@ -127,9 +127,6 @@ export class HasflowRuntime extends EventEmitter {
 			options = {}
 			options.env = Object.assign({}, process.env, env)
 			options.shell = true
-			if (!options.env["ORIGINS_ALLOWED"]) {
-				options.env["ORIGINS_ALLOWED"] = "*"
-			}
 
 			this._bundlePath = options.env["BUNDLE_PATH"] || ''
 

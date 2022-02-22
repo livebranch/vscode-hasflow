@@ -253,7 +253,7 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		env["HASFLOW_PROJECT_ROOT"] = this._projectRoot
 
 		if (args.seeders.length > 0) {
-			env["SEEDER_TAGS"] = args.seeders.join(" ")
+			env["SEEDER_TAGS"] = args.seeders.join(",")
 		}
 
 		// make sure to 'Stop' the buffered logging if 'trace' is not set

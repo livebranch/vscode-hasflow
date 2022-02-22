@@ -71,13 +71,26 @@
 		"onLanguage:hasflow"
 	],
 	"contributes": {
+		"iconThemes": [
+			{
+			  "id": "hasflow",
+			  "label": "Hasflow theme",
+			  "path": "./icon-assignments.json"
+			}
+		],
 		"languages": [
 			{
-				"id": "hasflow.exposure",
+				"id": "item.hasflow.yaml",
 				"extensions": [
-					".exp.yml.disabled"
+					".item.yml.disabled"
 				],
-				"language-configuration": "./language-configuration.json"
+				"filenames": [
+					"item.yml.disabled"
+				],
+				"icon": {
+					"light": "./fileicons/item-128-128.png",
+					"dark": "./fileicons/item-128-128.png"
+				}
 			},
 			{
 				"id": "hasflow.seeder",
@@ -86,9 +99,15 @@
 				]
 			},
 			{
-				"id": "hasflow.class",
+				"id": "hasflow.store",
 				"extensions": [
-					".class.yml.disabled"
+					".store.yml.disabled"
+				]
+			},
+			{
+				"id": "hasflow.tests",
+				"extensions": [
+					".tests.yml.disabled"
 				]
 			},
 			{
@@ -158,8 +177,8 @@
 				}
 			},
 			{
-				"language": "hasflow.exposure",
-				"path": "./syntaxes/yaml.tmLanguage.json",
+				"language": "item.hasflow.yaml",
+				"path": "./syntaxes/hflow.tmLanguage.json",
 				"scopeName": "source.exposure.yaml"
 			}
 		],
@@ -169,7 +188,15 @@
 				"url": "https://hasflow.org/schemas/exposure"
 			},
 			{
+				"fileMatch": "item.yml",
+				"url": "https://hasflow.org/schemas/exposure"
+			},
+			{
 				"fileMatch": "*.iface.yml",
+				"url": "https://hasflow.org/schemas/interface"
+			},
+			{
+				"fileMatch": "iface.yml",
 				"url": "https://hasflow.org/schemas/interface"
 			},
 			{
@@ -177,7 +204,15 @@
 				"url": "https://hasflow.org/schemas/seeder"
 			},
 			{
+				"fileMatch": "seed.yml",
+				"url": "https://hasflow.org/schemas/seeder"
+			},
+			{
 				"fileMatch": "*.process.yml",
+				"url": "https://hasflow.org/schemas/processor"
+			},
+			{
+				"fileMatch": "process.yml",
 				"url": "https://hasflow.org/schemas/processor"
 			},
 			{
@@ -185,11 +220,31 @@
 				"url": "https://hasflow.org/schemas/service"
 			},
 			{
-				"fileMatch": "*.class.yml",
-				"url": "https://hasflow.org/schemas/class"
+				"fileMatch": "service.yml",
+				"url": "https://hasflow.org/schemas/service"
+			},
+			{
+				"fileMatch": "*.store.yml",
+				"url": "https://hasflow.org/schemas/store"
+			},
+			{
+				"fileMatch": "store.yml",
+				"url": "https://hasflow.org/schemas/store"
+			},
+			{
+				"fileMatch": "*.tests.yml",
+				"url": "https://hasflow.org/schemas/tests"
+			},
+			{
+				"fileMatch": "tests.yml",
+				"url": "https://hasflow.org/schemas/tests"
 			},
 			{
 				"fileMatch": "*.template.yml",
+				"url": "https://hasflow.org/schemas/template"
+			},
+			{
+				"fileMatch": "template.yml",
 				"url": "https://hasflow.org/schemas/template"
 			},
 			{
@@ -197,7 +252,15 @@
 				"url": "https://hasflow.org/schemas/routes"
 			},
 			{
+				"fileMatch": "routes.yml",
+				"url": "https://hasflow.org/schemas/routes"
+			},
+			{
 				"fileMatch": "*.policy.yml",
+				"url": "https://hasflow.org/schemas/policy"
+			},
+			{
+				"fileMatch": "policy.yml",
 				"url": "https://hasflow.org/schemas/policy"
 			},
 			{
@@ -205,7 +268,15 @@
 				"url": "https://hasflow.org/schemas/external"
 			},
 			{
+				"fileMatch": "external.yml",
+				"url": "https://hasflow.org/schemas/external"
+			},
+			{
 				"fileMatch": "*.etl.yml",
+				"url": "https://hasflow.org/schemas/etl"
+			},
+			{
+				"fileMatch": "etl.yml",
 				"url": "https://hasflow.org/schemas/etl"
 			},
 			{
@@ -213,7 +284,15 @@
 				"url": "https://hasflow.org/schemas/migration"
 			},
 			{
+				"fileMatch": "migrate.yml",
+				"url": "https://hasflow.org/schemas/migration"
+			},
+			{
 				"fileMatch": "*.iface.yml",
+				"url": "https://hasflow.org/schemas/interface"
+			},
+			{
+				"fileMatch": "iface.yml",
 				"url": "https://hasflow.org/schemas/interface"
 			},
 			{
@@ -222,6 +301,10 @@
 			},
 			{
 				"fileMatch": "*.provider.yml",
+				"url": "https://hasflow.org/schemas/provider"
+			},
+			{
+				"fileMatch": "provider.yml",
 				"url": "https://hasflow.org/schemas/provider"
 			}
 		],

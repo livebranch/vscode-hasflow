@@ -113,7 +113,7 @@
 			  "2": { "name": "variable.other.property" },
 			  "3": { "name": "punctuation.separator.key-value.mapping.yaml" }
 			},
-			"end": "(?=(\\s*[a-zA-Z0-9_]+:(\\s|$)|\\s*[a-zA-Z0-9_]*:|\\s*#.+))",
+			"end": "(?=(\\s*[a-zA-Z0-9_]+:(\\s|$)|\\s*[a-zA-Z0-9_]+:|\\s*#.+))",
 			"endCaptures": {
 			},
 			"patterns": [
