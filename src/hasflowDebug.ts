@@ -62,6 +62,7 @@ export class HasflowDebugSession extends LoggingDebugSession {
 	private _isProgressCancellable = true;
 
 	private _valuesInHex = false;
+	private _env : NodeJS.Dict<string> = {};
 	private _useInvalidatedEvent = false;
 
 	private _addressesInHex = true;
@@ -262,6 +263,8 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		// wait until configuration has finished (and configurationDoneRequest has been called)
 		await this._configurationDone.wait(1000);
 
+		this._env = env
+
 		// start the program in the runtime
 		await this._runtime.start(args.debugger, env, !!args.stopOnEntry, !args.noDebug).then(() => {
 			this.sendResponse(response);
@@ -298,8 +301,13 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		this.sendResponse(response);
 	}
 
-    protected disconnectRequest(response: DebugProtocol.DisconnectResponse, args: DebugProtocol.DisconnectArguments, request?: DebugProtocol.Request): void {
+  protected disconnectRequest(response: DebugProtocol.DisconnectResponse, args: DebugProtocol.DisconnectArguments, request?: DebugProtocol.Request): void {
 		this._runtime.end();
+	}
+
+  protected RestartRequest(response: DebugProtocol.RestartResponse, args: DebugProtocol.RestartArguments, request?: DebugProtocol.Request): void {
+		this._runtime.end();
+		this._runtime.start(this._projectRoot, this._env, false, true);
 	}
 
 	protected breakpointLocationsRequest(response: DebugProtocol.BreakpointLocationsResponse, args: DebugProtocol.BreakpointLocationsArguments, request?: DebugProtocol.Request): void {
