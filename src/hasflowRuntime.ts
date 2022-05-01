@@ -152,6 +152,11 @@ export class HasflowRuntime extends EventEmitter {
 				this.debugProcess.stdout.on('data', (chunk) => {
 					const str = chunk.toString();
 
+					if (str == '.' || str == '...') {
+						this.sendEvent('processStep');
+						return
+					}
+
 					const regex = /^Error\[(.*)\.\.\.(.*)\]\:(.*)\|(.*)\n(.*)/m;
 					const found = str.match(regex);
 					

@@ -23,30 +23,31 @@
 	],
 	"repository": {
 		"cel-unquoted-name-value-pair": {
-			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)(:)\\s+[^\"'>][^$]*",
+			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?]?)(:)\\s+[^\"'>]",
 			"beginCaptures": {
 				"1": { "name": "keyword.control" },
 				"2": { "name": "variable.other.property" },
-				"3": { "name": "punctuation.separator.key-value.mapping.yaml" },
-				"4": { "name": "string.quoted.double.cel.start" }
+			  "3": { "name": "keyword.control" },
+				"4": { "name": "punctuation.separator.key-value.mapping.yaml" }
 			},
 			"end": "(?=($))",
 			"endCaptures": {
-			  "1": { "name": "string.quoted.double.cel.end" }
 			},
 			"patterns": [
 				{
+					"name": "source.cel",
 					"include": "source.cel"
 				}
 			]
 		},
 		"cel-empty-quoted-name-value-pair": {
-			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)(:)\\s+(\"'')",
+			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?]?)(:)\\s+(\"'')",
 			"beginCaptures": {
 				"1": { "name": "keyword.control" },
 				"2": { "name": "variable.other.property" },
-				"3": { "name": "punctuation.separator.key-value.mapping.yaml" },
-				"4": { "name": "string.quoted.double.start" }
+			  "3": { "name": "keyword.control" },
+				"4": { "name": "punctuation.separator.key-value.mapping.yaml" },
+				"5": { "name": "string.quoted.double.start" }
 			},
 			"end": "(\")",
 			"endCaptures": {
@@ -56,12 +57,13 @@
 			]
 		},
 		"cel-quoted-name-value-pair": {
-			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)(:)\\s+(\")",
+			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?]?)(:)\\s+(\")",
 			"beginCaptures": {
 				"1": { "name": "keyword.control" },
 				"2": { "name": "variable.other.property" },
-				"3": { "name": "punctuation.separator.key-value.mapping.yaml" },
-				"4": { "name": "string.quoted.double.start" }
+			  "3": { "name": "keyword.control" },
+				"4": { "name": "punctuation.separator.key-value.mapping.yaml" },
+				"5": { "name": "string.quoted.double.start" }
 			},
 			"end": "(\")",
 			"endCaptures": {
@@ -74,12 +76,13 @@
 			]
 		},
 		"cel-empty-single-quoted-name-value-pair": {
-			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)(:)\\s+('\"\")",
+			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?]?)(:)\\s+('\"\")",
 			"beginCaptures": {
 				"1": { "name": "keyword.control" },
 				"2": { "name": "variable.other.property" },
-				"3": { "name": "punctuation.separator.key-value.mapping.yaml" },
-				"4": { "name": "string.quoted.double.start" }
+			  "3": { "name": "keyword.control" },
+				"4": { "name": "punctuation.separator.key-value.mapping.yaml" },
+				"5": { "name": "string.quoted.double.start" }
 			},
 			"end": "(')",
 			"endCaptures": {
@@ -89,12 +92,13 @@
 			]
 		},
 		"cel-single-quoted-name-value-pair": {
-			"begin": "^\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)(:)\\s+(')",
+			"begin": "^\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?]?)(:)\\s+(')",
 			"beginCaptures": {
 				"1": { "name": "keyword.control" },
 				"2": { "name": "variable.other.property" },
-				"3": { "name": "punctuation.separator.key-value.mapping.yaml" },
-				"4": { "name": "string.quoted.single.start" }
+			  "3": { "name": "keyword.control" },
+				"4": { "name": "punctuation.separator.key-value.mapping.yaml" },
+				"5": { "name": "string.quoted.single.start" }
 			},
 			"end": "(')",
 			"endCaptures": {
@@ -107,11 +111,12 @@
 			]
 		},
 		"cel-multiline-name-value-pair": {
-			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)(:)\\s+>$",
+			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?]?)(:)\\s+>$",
 			"beginCaptures": {
 			  "1": { "name": "keyword.control" },
 			  "2": { "name": "variable.other.property" },
-			  "3": { "name": "punctuation.separator.key-value.mapping.yaml" }
+			  "3": { "name": "keyword.control" },
+			  "4": { "name": "punctuation.separator.key-value.mapping.yaml" }
 			},
 			"end": "(?=(\\s*[a-zA-Z0-9_]+:(\\s|$)|\\s*[a-zA-Z0-9_]+:|\\s*#.+))",
 			"endCaptures": {
