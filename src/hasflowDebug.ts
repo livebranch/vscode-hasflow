@@ -124,8 +124,8 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		this._runtime.on('processStep', (text) => {
 			this.sendEvent(new OutputEvent(`.`));
 		});
-		this._runtime.on('ready', () => {
-			this.sendEvent(new OutputEvent(`Ready for requests\n`, 'stdout'));
+		this._runtime.on('ready', (text) => {
+			this.sendEvent(new OutputEvent(`${text}\n`, 'stdout'));
 		});
 		this._runtime.on('terminatedError', (text) => {
 			this.sendEvent(new OutputEvent(`${text}\n`, 'stderr'));
@@ -250,15 +250,11 @@ export class HasflowDebugSession extends LoggingDebugSession {
 
 		this._projectRoot = args.program
 
-		if (env["BUNDLE_PATH"] == undefined) {
-			env["BUNDLE_PATH"] = args.bundlePath
+		if (env["HF_BUNDLE_PATH"] == undefined) {
+			env["HF_BUNDLE_PATH"] = args.bundlePath
 		}
 
-		env["HASFLOW_PROJECT_ROOT"] = this._projectRoot
-
-		if (args.seeders.length > 0) {
-			env["SEEDER_TAGS"] = args.seeders.join(",")
-		}
+		env["HF_PROJECT_ROOT"] = this._projectRoot
 
 		// make sure to 'Stop' the buffered logging if 'trace' is not set
 		logger.setup(args.trace ? Logger.LogLevel.Verbose : Logger.LogLevel.Stop, false);

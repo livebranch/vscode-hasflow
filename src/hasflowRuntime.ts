@@ -128,7 +128,7 @@ export class HasflowRuntime extends EventEmitter {
 			options.env = Object.assign({}, process.env, env)
 			options.shell = true
 
-			this._bundlePath = options.env["BUNDLE_PATH"] || ''
+			this._bundlePath = options.env["HF_BUNDLE_PATH"] || ''
 
 			// Wait for bundle to be built
 			const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -157,43 +157,73 @@ export class HasflowRuntime extends EventEmitter {
 						return
 					}
 
-					const regex = /^Error\[(.*)\.\.\.(.*)\]\:(.*)\|(.*)\n(.*)/m;
+					const regex = /^Error\[(.*)\.\.\.(.*)\]\:(.*)/m;
 					const found = str.match(regex);
 					
 					if (found === null) {
 						if (str.startsWith('Ready') || str.includes('\nReady')) {
-							this.sendEvent('ready');
+							this.sendEvent('ready', str);
 						} else {
 							this.sendEvent('message', str);
 						}
 					} else {
 						// Split found[2] (json path) by '.', search source file for occurrences - get line number
-					
+						var elEscaped = (e, idx) => e[idx] && e[idx].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 						this.fileAccessor.readFile(found[1]).then((source) => {
 							var sourceLines = source.split("\n")
 							var elements = found[2].split('.')
 							var activeElement = 0
+							var elementEscaped = elEscaped(elements, activeElement)
+							// For tracking indexed items
+							var elementInt = parseInt(elementEscaped)
+							var activeElementCounter = 0
+							var activeElementIndent = -1
 							var lineMatch = 0
 							var columnMatch = 0
 							for (let index = 0; index < sourceLines.length; index++) {
+								if (elementEscaped === false) {
+									break
+								}
+								
 								const line = sourceLines[index];
-								var elementEscaped = elements[activeElement].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-								const found = line.match("^[\\s]*" + elementEscaped + ":")
-								if (found !== null) {
-									lineMatch = index;
-									if (activeElement >= elements.length - 1) {
-										// Find the column
-										columnMatch = line.indexOf(elements[activeElement]) + elements[activeElement].length + 1;
-										break;
+								// If an int so we need to count the items
+								if (!isNaN(elementInt)) {
+									if (activeElementIndent < 0) {
+										activeElementIndent = line.indexOf("-")
 									}
-									activeElement++;
+									if (activeElementIndent > 0) {
+										if (line.indexOf("-") == activeElementIndent) {
+											activeElementCounter++
+										}
+										if (activeElementCounter >= elementInt + 1) {
+											elementInt = NaN
+											activeElement++
+											elementEscaped = elEscaped(elements, activeElement)
+										}
+									}
+								}
+								if (isNaN(elementInt)) {
+									const found = line.match("^[\\s\\-]*" + elementEscaped + ":")
+									if (found !== null) {
+										lineMatch = index;
+										if (activeElement >= elements.length - 1) {
+											// Find the column
+											columnMatch = line.indexOf(elements[activeElement]) + elements[activeElement].length + 1;
+											break;
+										}
+										activeElement++;
+										elementEscaped = elEscaped(elements, activeElement)
+										elementInt = parseInt(elementEscaped)
+										activeElementCounter = 0
+										activeElementIndent = -1
+									}
 								}
 							}
 
-							this.sendEvent('output', found[3] + ' --- ' + found[4] + '+++' + found[5], found[1], lineMatch, columnMatch);
+							this.sendEvent('output', found[3], found[1], lineMatch, columnMatch);
 						}).catch(reason => {
-							this.sendEvent('message', 'Failed to source file: ' + found[1] + reason);
+							this.sendEvent('message', 'Failed to open source file: ' + found[1] + ', Error: '+reason);
 						})
 
 						// Find how many dots in found[5], use as column
