@@ -2,6 +2,7 @@
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
 
+import * as os from 'os';
 import { EventEmitter } from 'events';
 import { ChildProcess, spawn, SpawnOptionsWithoutStdio } from 'child_process';;
 import * as kill from 'tree-kill';
@@ -136,7 +137,14 @@ export class HasflowRuntime extends EventEmitter {
 				await delay(1000) /// waiting 1 second.
 			}
 
-			this.debugProcess = spawn(program, [], options);
+			// locate then start the program in the runtime
+			var binary = program
+			if (binary == "hasflow" && os.platform() == "win32") {
+				//binary = env["HF_PROJECT_ROOT"] + "/hasflow.exe"
+				binary = `"C:/Program\ Files/Hasflow/hasflow.exe"`
+			}
+
+			this.debugProcess = spawn(binary, [], options);
 
 			if (this.debugProcess.stderr !== null) {
 				this.debugProcess.stderr.pipe(process.stdout)

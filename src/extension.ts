@@ -74,12 +74,17 @@ class HasflowConfigurationProvider implements DebugConfigurationProvider {
 			config.bundlePath = `${os.tmpdir()}/package-${crypto.randomBytes(4).readUInt32LE(0)}.zip`
 			config.program = folder?.uri.path
 
+			var zipcmd = `zip -FSr ${config.bundlePath} *`
+			if (os.platform() == "win32") {
+				zipcmd = `Compress-Archive -Path * -DestinationPath ${config.bundlePath}`
+			}
+
 			var prelaunchTask = new Task(
 				{ type: 'shell', task: 'package', isBackground: true, },
 				TaskScope.Global,
 				"Hasflow Package",
 				"hasflow",
-				new ShellExecution(`zip -FSr ${config.bundlePath} * -x "*node_modules*"`)
+				new ShellExecution(zipcmd)
 			);
 			if (!prelaunchTask.presentationOptions) {
 				prelaunchTask.presentationOptions = {}

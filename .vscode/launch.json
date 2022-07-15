@@ -10,7 +10,6 @@
 			"type": "node",
 			"request": "launch",
 			"cwd": "${workspaceFolder}",
-			// "program": "/usr/local/bin/hasflow",
 			"program": "${workspaceFolder}/src/debugAdapter.ts",
 			"args": [
 				"--server=4711"
