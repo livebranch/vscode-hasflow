@@ -8,9 +8,8 @@ import {
 	InitializedEvent, TerminatedEvent, StoppedEvent, BreakpointEvent, OutputEvent,
 	ProgressStartEvent, ProgressUpdateEvent, ProgressEndEvent, InvalidatedEvent,
 	Thread, StackFrame, Scope, Source, Handles, Breakpoint
-} from 'vscode-debugadapter';
-import { DebugProtocol } from 'vscode-debugprotocol';
-import { basename } from 'path';
+} from '@vscode/debugadapter';
+import { DebugProtocol } from '@vscode/debugprotocol';
 import { HasflowRuntime, IRuntimeBreakpoint, FileAccessor, IRuntimeVariable, timeout, IRuntimeVariableType } from './hasflowRuntime';
 import { Subject } from 'await-notify';
 
@@ -30,7 +29,7 @@ interface ILaunchRequestArguments extends DebugProtocol.LaunchRequestArguments {
 	/** path to bundle zip. */
 	bundlePath: string;
 	/** Seeder Tags */
-	seeders: Array<string>;
+	initialSeederTags: Array<string>;
 	/** Automatically stop target after launch. If not specified, target does not stop. */
 	stopOnEntry?: boolean;
 	/** enable logging the Debug Adapter Protocol */
@@ -255,6 +254,8 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		}
 
 		env["HF_PROJECT_ROOT"] = this._projectRoot
+
+		env["HF_INITIAL_SEEDER_TAGS"] = args.initialSeederTags.join(',')
 
 		// make sure to 'Stop' the buffered logging if 'trace' is not set
 		logger.setup(args.trace ? Logger.LogLevel.Verbose : Logger.LogLevel.Stop, false);
@@ -851,7 +852,7 @@ export class HasflowDebugSession extends LoggingDebugSession {
 	}
 
 	private createSource(filePath: string): Source {
-		return new Source(basename(filePath), this.convertDebuggerPathToClient(filePath), undefined, undefined, 'hasflow-adapter-data');
+		return new Source(filePath.split(/[\\/]/).pop()!, this.convertDebuggerPathToClient(filePath), undefined, undefined, 'hasflow-adapter-data');
 	}
 }
 

@@ -51,7 +51,7 @@ args.forEach(function (val, index, array) {
 });
 
 if (port == 0) {
-	port = 4711
+	port = 4711;
 }
 
 // start a server that creates a new session for every connection request
@@ -61,6 +61,8 @@ Net.createServer((socket) => {
 	socket.on('end', () => {
 		console.error('>> client connection closed\n');
 	});
+
+	console.log('Starting session');
 
 	const session = new HasflowDebugSession(fsAccessor);
 	session.setRunAsServer(true);

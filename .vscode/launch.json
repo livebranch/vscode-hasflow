@@ -1,10 +1,34 @@
-// A launch configuration that compiles the extension and then opens it inside a new window
-// Use IntelliSense to learn about possible attributes.
-// Hover to view descriptions of existing attributes.
-// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 {
 	"version": "0.2.0",
 	"configurations": [
+		{
+			"name": "Extension",
+			"type": "extensionHost",
+			"request": "launch",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"${workspaceFolder}/sampleWorkspace"
+			],
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			],
+			"preLaunchTask": "npm: watch"
+		},
+		{
+			"name": "Web Extension",
+			"type": "extensionHost",
+			"debugWebWorkerHost": true,
+			"request": "launch",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"--extensionDevelopmentKind=web",
+				"${workspaceFolder}/sampleWorkspace"
+			],
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			],
+			"preLaunchTask": "npm: watch web"
+		},
 		{
 			"name": "Server",
 			"type": "node",
@@ -20,17 +44,22 @@
 			"preLaunchTask": "npm: compile"
 		},
 		{
-			"name": "Extension",
-			"type": "extensionHost",
+			"name": "Tests",
+			"type": "node",
 			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
 			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}",
-				"${workspaceFolder}/sampleWorkspace"
+				"-u", "tdd",
+				"--timeout", "999999",
+				"--colors",
+				"./out/tests/"
 			],
 			"outFiles": [
-				"${workspaceFolder}/dist/ext/**/*.js"
+				"${workspaceFolder}/out/**/*.js"
 			],
-			"preLaunchTask": "npm: watch"
+			"internalConsoleOptions": "openOnSessionStart",
+			"preLaunchTask": "npm: compile"
 		}
 	],
 	"compounds": [
@@ -38,5 +67,5 @@
 			"name": "Extension + Server",
 			"configurations": [ "Extension", "Server" ]
 		}
-	]	
+	]
 }

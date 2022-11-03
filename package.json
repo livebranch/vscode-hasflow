@@ -1,7 +1,7 @@
 {
 	"name": "hasflow",
 	"displayName": "HasFlow",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"publisher": "livebranchstudios",
 	"description": "Extension for HasFlow file schemas",
 	"author": {
@@ -14,8 +14,9 @@
 		"url": "https://github.com/livebranch/vscode-hasflow.git"
 	},
 	"engines": {
-		"vscode": "^1.61.0"
+    "vscode": "^1.66.0"
 	},
+  "icon": "images/hasflow-icon.png",
 	"categories": [
 		"Programming Languages",
 		"Debuggers"
@@ -24,145 +25,104 @@
 		"hmarr.cel",
 		"redhat.vscode-yaml"
 	],
-	"main": "./dist/ext/extension.js",
+	"disabledScripts": {
+		"esbuild-web": "esbuild ./src/web-extension.ts --bundle --tsconfig=./tsconfig.json --external:vscode --format=cjs --platform=browser --outfile=dist/web-extension.js"
+	},
 	"scripts": {
-		"vscode:prepublish": "yarn run package-ext",
-		"compile": "tsc -p ./",
-		"lint": "eslint src --ext ts",
-		"watch": "webpack --watch --devtool nosources-source-map --info-verbosity verbose --config ./build/extension.webpack.config.js",
-		"watch2": "tsc -watch -p ./",
-		"pretest": "yarn run compile && yarn run lint",
-		"test": "node ./out/test/runTest.js",
-		"package": "vsce package",
-		"publish": "vsce publish",
-		"package-ext": "webpack --mode production --config ./build/extension.webpack.config.js",
-		"compile-web": "webpack --devtool nosources-source-map --config ./build/web-extension.webpack.config.js",
-		"watch-web": "webpack --watch --devtool nosources-source-map --info-verbosity verbose --config ./build/web-extension.webpack.config.js",
-		"package-web": "webpack --mode production --config ./build/web-extension.webpack.config.js"
+    "compile": "tsc -p ./",
+    "lint": "eslint src --ext ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --tsconfig=./tsconfig.json --external:vscode --format=cjs --platform=node --outfile=dist/extension.js",
+    "watch": "npm run -S esbuild-base -- --sourcemap --sources-content=false --watch",
+    "watch-web": "npm run -S esbuild-web -- --sourcemap --sources-content=false --watch",
+    "build": "npm run -S esbuild-base -- --sourcemap --sources-content=false # && npm run -S esbuild-web -- --sourcemap --sources-content=false",
+    "package": "vsce package",
+    "publish": "vsce publish",
+    "publish-pre-release": "vsce publish --pre-release",
+    "vscode:prepublish": "rimraf dist && npm run -S esbuild-base -- --minify # && npm run -S esbuild-web -- --minify",
+    "test": "npm run typecheck"
 	},
 	"dependencies": {
-		"await-notify": "1.0.1",
 		"child_process": "^1.0.2",
-		"tree-kill": "^1.2.2",
-		"vscode-debugadapter": "^1.50.0",
-		"vscode-debugprotocol": "^1.50.1"
+		"tree-kill": "^1.2.2"
 	},
 	"devDependencies": {
-		"@types/glob": "^7.2.0",
-		"@types/mocha": "^9.0.0",
-		"@types/node": "^14.14.37",
-		"@types/vscode": "^1.61.0",
-		"@typescript-eslint/eslint-plugin": "^5.2.0",
-		"@typescript-eslint/parser": "^5.2.0",
-		"eslint": "^8.1.0",
-		"glob": "^7.2.0",
-		"mocha": "^9.1.3",
-		"ts-loader": "^8.3.0",
-		"typescript": "^4.4.4",
-		"vsce": "^1.100.2",
-		"vscode-debugadapter-testsupport": "^1.50.0",
-		"webpack": "^4.46.0",
-		"webpack-cli": "^3.3.12"
+    "@types/glob": "^7.2.0",
+    "@types/mocha": "^9.1.0",
+    "@types/node": "^14.14.37",
+    "@types/vscode": "^1.66.0",
+    "@typescript-eslint/eslint-plugin": "^5.17.0",
+    "@typescript-eslint/parser": "^5.17.0",
+    "@vscode/debugadapter": "^1.56.0",
+    "@vscode/debugadapter-testsupport": "^1.56.0",
+    "await-notify": "^1.0.1",
+    "base64-js": "^1.5.1",
+    "esbuild": "^0.14.29",
+    "eslint": "^8.12.0",
+    "events": "^3.3.0",
+    "glob": "^7.2.0",
+    "mocha": "^9.2.2",
+    "path-browserify": "^1.0.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.6.3",
+    "url": "^0.11.0",
+    "vsce": "^2.7.0"
 	},
+	"main": "./dist/extension.js",
 	"activationEvents": [
 		"onDebugResolve:hasflow",
 		"onDebugDynamicConfigurations:hasflow",
 		"workspaceContains:**/site.yml",
-		"onLanguage:hasflow"
+		"onLanguage:hasflow",
+    "onCommand:extension.hasflow-debug.runEditorContents",
+    "onCommand:extension.hasflow-debug.debugEditorContents"
 	],
 	"contributes": {
-		"iconThemes": [
+		"commands": [
 			{
-			  "id": "hasflow",
-			  "label": "Hasflow theme",
-			  "path": "./icon-assignments.json"
+				"command": "extension.hasflow-debug.debugEditorContents",
+				"title": "Debug File",
+				"category": "Hasflow Debug",
+				"enablement": "!inDebugMode",
+				"icon": "$(debug-alt)"
+			},
+			{
+				"command": "extension.hasflow-debug.runEditorContents",
+				"title": "Run File",
+				"category": "Hasflow Debug",
+				"enablement": "!inDebugMode",
+				"icon": "$(play)"
 			}
 		],
-		"languages": [
+		"menus": {
+      "editor/title/run": [
+        {
+          "command": "extension.hasflow-debug.runEditorContents",
+          "when": "resourceLangId == yaml",
+          "group": "navigation@1"
+        },
+        {
+          "command": "extension.hasflow-debug.debugEditorContents",
+          "when": "resourceLangId == yaml",
+          "group": "navigation@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "extension.hasflow-debug.debugEditorContents",
+          "when": "resourceLangId == yaml"
+        },
+        {
+          "command": "extension.hasflow-debug.runEditorContents",
+          "when": "resourceLangId == yaml"
+        }
+      ]
+    },
+		"iconThemes": [
 			{
-				"id": "item.hasflow.yaml",
-				"extensions": [
-					".item.yml.disabled"
-				],
-				"filenames": [
-					"item.yml.disabled"
-				],
-				"icon": {
-					"light": "./fileicons/item-128-128.png",
-					"dark": "./fileicons/item-128-128.png"
-				}
-			},
-			{
-				"id": "hasflow.seeder",
-				"extensions": [
-					".seeder.yml.disabled"
-				]
-			},
-			{
-				"id": "hasflow.store",
-				"extensions": [
-					".store.yml.disabled"
-				]
-			},
-			{
-				"id": "hasflow.tests",
-				"extensions": [
-					".tests.yml.disabled"
-				]
-			},
-			{
-				"id": "hasflow.template",
-				"extensions": [
-					".template.yml.disabled"
-				]
-			},
-			{
-				"id": "hasflow.routes",
-				"extensions": [
-					".routes.yml.disabled"
-				]
-			},
-			{
-				"id": "hasflow.policy",
-				"extensions": [
-					".policy.yml.disabled"
-				]
-			},
-			{
-				"id": "hasflow.external",
-				"extensions": [
-					".external.yml.disabled"
-				]
-			},
-			{
-				"id": "hasflow.etl",
-				"extensions": [
-					".etl.yml.disabled"
-				]
-			},
-			{
-				"id": "hasflow.migration",
-				"extensions": [
-					".migration.yml.disabled"
-				]
-			},
-			{
-				"id": "hasflow.interface",
-				"extensions": [
-					".interface.yml.disabled"
-				]
-			},
-			{
-				"id": "hasflow.site",
-				"extensions": [
-					".site.yml.disabled"
-				]
-			},
-			{
-				"id": "hasflow.provider",
-				"extensions": [
-					".provider.yml.disabled"
-				]
+				"id": "hasflow",
+				"label": "Hasflow theme",
+				"path": "./icon-assignments.json"
 			}
 		],
 		"grammars": [
@@ -175,11 +135,6 @@
 				"embeddedLanguages": {
 					"meta.embedded.block.cel": "cel"
 				}
-			},
-			{
-				"language": "item.hasflow.yaml",
-				"path": "./syntaxes/hflow.tmLanguage.json",
-				"scopeName": "source.exposure.yaml"
 			}
 		],
 		"yamlValidation": [
@@ -324,7 +279,7 @@
 							"debugger": {
 								"type": "string",
 								"description": "Absolute path to debugger.",
-								"default": "hasflow"
+								"default": null
 							},
 							"env": {
 								"type": "object",
@@ -336,7 +291,7 @@
 								"description": "Absolute path to debugger.",
 								"default": ""
 							},
-							"seeders": {
+							"initialSeederTags": {
 								"type": "array",
 								"items": {
 									"type": "string"
@@ -353,7 +308,7 @@
 						"type": "hasflow",
 						"request": "launch",
 						"debugger": "hasflow",
-						"seeders": []
+						"initialSeederTags": []
 					},
 					{
 						"type": "pwa-chrome",
