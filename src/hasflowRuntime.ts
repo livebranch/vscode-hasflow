@@ -2,11 +2,10 @@
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
 
-import * as os from 'os';
 import { EventEmitter } from 'events';
 import { ChildProcess, spawn, SpawnOptionsWithoutStdio } from 'child_process';;
 import * as kill from 'tree-kill';
-import * as fs from 'fs';
+// import * as fs from 'fs';
 
 export interface FileAccessor {
 	readFile(path: string): Promise<string>;
@@ -71,7 +70,7 @@ export class HasflowRuntime extends EventEmitter {
 		return this._sourceFile;
 	}
 
-	private _bundlePath: string = '';
+	// private _bundlePath: string = '';
 
 	private variables = new Map<string, IRuntimeVariable>();
 
@@ -129,22 +128,17 @@ export class HasflowRuntime extends EventEmitter {
 			options.env = Object.assign({}, process.env, env)
 			options.shell = true
 
-			this._bundlePath = options.env["HF_BUNDLE_PATH"] || ''
+			// this._bundlePath = options.env["HF_BUNDLE_PATH"] || ''
 
 			// Wait for bundle to be built
-			const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
-			while (!fs.existsSync(this._bundlePath)) {
-				await delay(1000) /// waiting 1 second.
-			}
+			// const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+			// while (!fs.existsSync(this._bundlePath)) {
+			// 	await delay(1000) /// waiting 1 second.
+			// }
 
-			// locate then start the program in the runtime
-			var binary = program
-			if (binary == "hasflow" && os.platform() == "win32") {
-				//binary = env["HF_PROJECT_ROOT"] + "/hasflow.exe"
-				binary = `"C:/Program\ Files/Hasflow/hasflow.exe"`
-			}
+			this.sendEvent('message', "Starting "+program);
 
-			this.debugProcess = spawn(binary, [], options);
+			this.debugProcess = spawn(program, [], options);
 
 			if (this.debugProcess.stderr !== null) {
 				this.debugProcess.stderr.pipe(process.stdout)
@@ -565,11 +559,11 @@ export class HasflowRuntime extends EventEmitter {
 				}
 				// resolve();
 			});
-			if (this._bundlePath != "") {
-				fs.unlink(this._bundlePath, () => {
-					// Do nothing
-				})
-			}
+			// if (this._bundlePath != "") {
+			// 	fs.unlink(this._bundlePath, () => {
+			// 		// Do nothing
+			// 	})
+			// }
 		}
 	}
 

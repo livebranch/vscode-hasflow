@@ -251,7 +251,11 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		this._projectRoot = args.program
 
 		if (env["HF_BUNDLE_PATH"] == undefined) {
-			env["HF_BUNDLE_PATH"] = args.bundlePath
+			if (args.bundlePath != '') {
+				env["HF_BUNDLE_PATH"] = args.bundlePath
+			} else {
+				env["HF_BUNDLE_PATH"] = this._projectRoot
+			}
 		}
 
 		env["HF_PROJECT_ROOT"] = this._projectRoot

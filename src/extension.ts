@@ -6,7 +6,7 @@
 
 import * as Net from 'net';
 import * as os from 'os';
-import * as crypto from 'crypto';
+// import * as crypto from 'crypto';
 import { HasflowDebugSession } from './hasflowDebug';
 import { 
 	workspace,
@@ -25,11 +25,11 @@ import {
 	DebugAdapterDescriptor,
 	DebugAdapterServer,
 	Uri,
-	Task,
-	tasks,
-	ShellExecution,
-	TaskScope,
-	TaskRevealKind,
+	// Task,
+	// tasks,
+	// ShellExecution,
+	// TaskScope,
+	// TaskRevealKind,
 } from 'vscode';
 import { FileAccessor } from './hasflowRuntime';
 
@@ -71,28 +71,28 @@ class HasflowConfigurationProvider implements DebugConfigurationProvider {
 	resolveDebugConfiguration(folder: WorkspaceFolder | undefined, config: DebugConfiguration, token?: CancellationToken): ProviderResult<DebugConfiguration> {
 
 		if (!config.bundlePath) {
-			config.bundlePath = `${os.tmpdir()}/package-${crypto.randomBytes(4).readUInt32LE(0)}.zip`
+			config.bundlePath = ''
 			config.program = folder?.uri.path
 
-			var zipcmd = `zip -FSr ${config.bundlePath} *`
-			if (os.platform() == "win32") {
-				zipcmd = `Compress-Archive -Path * -DestinationPath ${config.bundlePath}`
-			}
+			// var zipcmd = `zip -FSr ${config.bundlePath} *`
+			// if (os.platform() == "win32") {
+			// 	zipcmd = `Compress-Archive -Path * -DestinationPath ${config.bundlePath}`
+			// }
 
-			var prelaunchTask = new Task(
-				{ type: 'shell', task: 'package', isBackground: true, },
-				TaskScope.Global,
-				"Hasflow Package",
-				"hasflow",
-				new ShellExecution(zipcmd)
-			);
-			if (!prelaunchTask.presentationOptions) {
-				prelaunchTask.presentationOptions = {}
-			}
-			prelaunchTask.presentationOptions.focus = false
-			prelaunchTask.presentationOptions.reveal = TaskRevealKind.Silent
+			// var prelaunchTask = new Task(
+			// 	{ type: 'shell', task: 'package', isBackground: true, },
+			// 	TaskScope.Global,
+			// 	"Hasflow Package",
+			// 	"hasflow",
+			// 	new ShellExecution(zipcmd)
+			// );
+			// if (!prelaunchTask.presentationOptions) {
+			// 	prelaunchTask.presentationOptions = {}
+			// }
+			// prelaunchTask.presentationOptions.focus = false
+			// prelaunchTask.presentationOptions.reveal = TaskRevealKind.Silent
 
-			tasks.executeTask(prelaunchTask)
+			// tasks.executeTask(prelaunchTask)
 
 			// Focus the debug window
 			commands.executeCommand('workbench.debug.action.focusRepl')
@@ -104,8 +104,12 @@ class HasflowConfigurationProvider implements DebugConfigurationProvider {
 					config.type = 'hasflow';
 					config.name = 'Launch';
 					config.request = 'launch';
-					config.debugger = 'hasflow';
-					config.seeders = [];
+ 					if (os.platform() == "win32") {
+ 						config.debugger = 'hasflow.exe';
+ 					} else {
+ 						config.debugger = 'hasflow';
+ 					}
+ 					config.seeders = [];
 					// Ideally we would register the task and call it as a prelaunch task
 					// config.preLaunchTask = prelaunchTask.name;
 				}
