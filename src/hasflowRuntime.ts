@@ -166,7 +166,7 @@ export class HasflowRuntime extends EventEmitter {
 						if (str.startsWith('Ready') || str.includes('\nReady')) {
 							this.sendEvent('ready', str);
 						} else {
-							this.sendEvent('message', str);
+							this.sendEvent('debugOut', str);
 						}
 					} else {
 						// Split found[2] (json path) by '.', search source file for occurrences - get line number

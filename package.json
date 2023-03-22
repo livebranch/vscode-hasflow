@@ -296,6 +296,14 @@
 				"url": "https://hasflow.org/schemas/interface"
 			},
 			{
+				"fileMatch": "*.query.yml",
+				"url": "https://hasflow.org/schemas/query"
+			},
+			{
+				"fileMatch": "iface.yml",
+				"url": "https://hasflow.org/schemas/interface"
+			},
+			{
 				"fileMatch": "site.yml",
 				"url": "https://hasflow.org/schemas/site"
 			},

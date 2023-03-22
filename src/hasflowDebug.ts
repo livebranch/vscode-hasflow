@@ -7,7 +7,7 @@ import {
 	LoggingDebugSession,
 	InitializedEvent, TerminatedEvent, StoppedEvent, BreakpointEvent, OutputEvent,
 	ProgressStartEvent, ProgressUpdateEvent, ProgressEndEvent, InvalidatedEvent,
-	Thread, StackFrame, Scope, Source, Handles, Breakpoint
+	Thread, /* StackFrame,  */Scope, Source, Handles, Breakpoint
 } from 'vscode-debugadapter';
 import { DebugProtocol } from 'vscode-debugprotocol';
 import { basename } from 'path';
@@ -65,8 +65,8 @@ export class HasflowDebugSession extends LoggingDebugSession {
 	private _env : NodeJS.Dict<string> = {};
 	private _useInvalidatedEvent = false;
 
-	private _addressesInHex = true;
-
+	// private _addressesInHex = true;
+	
 	/**
 	 * Creates a new debug adapter that is used for one debug session.
 	 * We configure the default implementation of a debug adapter here.
@@ -113,6 +113,7 @@ export class HasflowDebugSession extends LoggingDebugSession {
 				e.body.group = text;
 				e.body.output = `group-${text}\n`;
 			}
+
 			e.body.source = this.createSource(this._projectRoot + '/' + filePath);
 			e.body.line = this.convertDebuggerLineToClient(line);
 			e.body.column = this.convertDebuggerColumnToClient(column);
@@ -120,6 +121,9 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		});
 		this._runtime.on('message', (text) => {
 			this.sendEvent(new OutputEvent(`${text}\n`));
+		});
+		this._runtime.on('debugOut', (text) => {
+			this.sendEvent(new OutputEvent(`${text}`));
 		});
 		this._runtime.on('processStep', (text) => {
 			this.sendEvent(new OutputEvent(`.`));
@@ -134,6 +138,7 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		this._runtime.on('end', () => {
 			this._runtime.end()
 			this.sendEvent(new TerminatedEvent());
+			// this.sendEvent(new OutputEvent(`Terminating.`, 'stdout'));
 		});
 
 		// Grab focus (got to be a better way?)
@@ -308,7 +313,7 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		this._runtime.end();
 	}
 
-  protected RestartRequest(response: DebugProtocol.RestartResponse, args: DebugProtocol.RestartArguments, request?: DebugProtocol.Request): void {
+  protected restartRequest(response: DebugProtocol.RestartResponse, args: DebugProtocol.RestartArguments, request?: DebugProtocol.Request): void {
 		this._runtime.end();
 		this._runtime.start(this._projectRoot, this._env, false, true);
 	}
@@ -396,7 +401,7 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		const stk = this._runtime.stack(startFrame, endFrame);
 
 		response.body = {
-			stackFrames: stk.frames.map((f, ix) => {
+			stackFrames: [],/* stk.frames.map((f, ix) => {
 				const sf: DebugProtocol.StackFrame = new StackFrame(f.index, f.name, this.createSource(this._projectRoot + '/' + f.file), this.convertDebuggerLineToClient(f.line));
 				if (typeof f.column === 'number') {
 					sf.column = this.convertDebuggerColumnToClient(f.column);
@@ -408,7 +413,7 @@ export class HasflowDebugSession extends LoggingDebugSession {
 				}
 
 				return sf;
-			}),
+			}), */
 			//no totalFrames: 				// VS Code has to probe/guess. Should result in a max. of two requests
 			totalFrames: stk.count			// stk.count is the correct size, should result in a max. of two requests
 			//totalFrames: 1000000 			// not the correct size, should result in a max. of two requests
@@ -846,9 +851,9 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		return dapVariable;
 	}
 
-	private formatAddress(x: number, pad = 8) {
-		return this._addressesInHex ? '0x' + x.toString(16).padStart(8, '0') : x.toString(10);
-	}
+	// private formatAddress(x: number, pad = 8) {
+	// 	return this._addressesInHex ? '0x' + x.toString(16).padStart(8, '0') : x.toString(10);
+	// }
 
 	private formatNumber(x: number) {
 		return this._valuesInHex ? '0x' + x.toString(16) : x.toString(10);
