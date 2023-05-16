@@ -49,7 +49,7 @@ export function activate(context: ExtensionContext) {
 
 	context.subscriptions.push(
 		commands.registerCommand('hasflow.debug.startSession', (config) => {
-			window.showInformationMessage("called hasflow.debug.startSession");
+			window.showInformationMessage("Called hasflow.debug.startSession");
 			
 			let workspaceFolder;
 			if (window.activeTextEditor) {
@@ -134,6 +134,8 @@ class HasflowDebugAdapterServerDescriptorFactory implements DebugAdapterDescript
 				session.setRunAsServer(true);
 				session.start(socket as NodeJS.ReadableStream, socket);
 			}).listen(0);
+		} else {
+			// window.showInformationMessage("Server already running");
 		}
 
 		var server = this.server

@@ -117,6 +117,7 @@ export class HasflowDebugSession extends LoggingDebugSession {
 			e.body.source = this.createSource(this._projectRoot + '/' + filePath);
 			e.body.line = this.convertDebuggerLineToClient(line);
 			e.body.column = this.convertDebuggerColumnToClient(column);
+
 			this.sendEvent(e);
 		});
 		this._runtime.on('message', (text) => {
@@ -130,6 +131,9 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		});
 		this._runtime.on('ready', (text) => {
 			this.sendEvent(new OutputEvent(`${text}\n`, 'stdout'));
+		});
+		this._runtime.on('errorOut', (text) => {
+			this.sendEvent(new OutputEvent(`${text}\n`, 'stderr'));
 		});
 		this._runtime.on('terminatedError', (text) => {
 			this.sendEvent(new OutputEvent(`${text}\n`, 'stderr'));
@@ -287,6 +291,8 @@ export class HasflowDebugSession extends LoggingDebugSession {
 
 	protected async setBreakPointsRequest(response: DebugProtocol.SetBreakpointsResponse, args: DebugProtocol.SetBreakpointsArguments): Promise<void> {
 
+		this.sendEvent(new OutputEvent(`Attempting set breakpoint!!\n`));
+
 		const path = args.source.path as string;
 		const clientLines = args.lines || [];
 
@@ -314,6 +320,7 @@ export class HasflowDebugSession extends LoggingDebugSession {
 	}
 
   protected restartRequest(response: DebugProtocol.RestartResponse, args: DebugProtocol.RestartArguments, request?: DebugProtocol.Request): void {
+		this.sendEvent(new OutputEvent(`Attempting restart!!\n`));
 		this._runtime.end();
 		this._runtime.start(this._projectRoot, this._env, false, true);
 	}

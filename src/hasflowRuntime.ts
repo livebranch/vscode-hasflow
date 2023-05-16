@@ -144,8 +144,9 @@ export class HasflowRuntime extends EventEmitter {
 				this.debugProcess.stderr.pipe(process.stdout)
 				this.debugProcess.stderr.on('data', (chunk) => {
 					const str = chunk.toString();
-
-					this.sendEvent('terminatedError', str);
+					
+					this.sendEvent('errorOut', str);
+					// this.sendEvent('terminatedError', str);
 				});
 			}
 			if (this.debugProcess.stdout !== null) {
@@ -154,10 +155,10 @@ export class HasflowRuntime extends EventEmitter {
 				this.debugProcess.stdout.on('data', (chunk) => {
 					const str = chunk.toString();
 
-					if (str == '.' || str == '...') {
-						this.sendEvent('processStep');
-						return
-					}
+					// if (str == '.' || str == '...') {
+					// 	this.sendEvent('processStep');
+					// 	return
+					// }
 
 					const regex = /^Error\[(.*)\.\.\.(.*)\]\:(.*)/m;
 					const found = str.match(regex);
@@ -241,17 +242,15 @@ export class HasflowRuntime extends EventEmitter {
 			});
 
 			this.debugProcess.on('exit', (code, signal) => {
-				this.sendEvent('stopOnException', 'Process exiting with code: ' + code + ' signal ' + signal);
+				if (code == null && signal == 'SIGTERM') {
+					this.sendEvent('message', 'Process exited normally');
+				} else {
+					this.sendEvent('message', 'Process exiting with code: ' + code + ' signal ' + signal);
+				}
 				resolve();
 			});
 
 			this.debugProcess.on('disconnect', () => {
-				this.sendEvent('stopOnException', 'Process disconnected');
-				resolve();
-			});
-
-			this.debugProcess.on('close', (code) => {
-				this.sendEvent('message', 'Process exiting with code: ' + code);
 				resolve();
 			});
 
@@ -325,7 +324,7 @@ export class HasflowRuntime extends EventEmitter {
 			} else {
 				// no more lines: run to end
 				this.currentColumn = undefined;
-				this.sendEvent('end');
+				// this.sendEvent('end');
 				return true;
 			}
 		}
@@ -552,9 +551,12 @@ export class HasflowRuntime extends EventEmitter {
 	}
 
 	public end(): void {
+		
 		if (this.debugProcess != null) {
 			kill(this.debugProcess.pid, (err) => {
 				if (err) {
+					this.sendEvent('message', 'Failed to kill process: ' + err.message);
+					
 					// logger(`Error killing process ${this. .pid}: ${err}`);
 				}
 				// resolve();
