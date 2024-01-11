@@ -19,11 +19,14 @@
 		},
 		{
 			"include": "#cel-multiline-name-value-pair"
+		},
+		{
+			"include": "#cel-multiline-name-value-pair-unescaped"
 		}
 	],
 	"repository": {
 		"cel-unquoted-name-value-pair": {
-			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?]?)(:)\\s+[^\"'>]",
+			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?\\!]?)(:)\\s+(?=[^\"'>])",
 			"beginCaptures": {
 				"1": { "name": "keyword.control" },
 				"2": { "name": "variable.other.property" },
@@ -35,13 +38,12 @@
 			},
 			"patterns": [
 				{
-					"name": "source.cel",
 					"include": "source.cel"
 				}
 			]
 		},
 		"cel-empty-quoted-name-value-pair": {
-			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?]?)(:)\\s+(\"'')",
+			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?\\!]?)(:)\\s+(\"'')",
 			"beginCaptures": {
 				"1": { "name": "keyword.control" },
 				"2": { "name": "variable.other.property" },
@@ -57,7 +59,7 @@
 			]
 		},
 		"cel-quoted-name-value-pair": {
-			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?]?)(:)\\s+(\")",
+			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?\\!]?)(:)\\s+(\")",
 			"beginCaptures": {
 				"1": { "name": "keyword.control" },
 				"2": { "name": "variable.other.property" },
@@ -76,7 +78,7 @@
 			]
 		},
 		"cel-empty-single-quoted-name-value-pair": {
-			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?]?)(:)\\s+('\"\")",
+			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?\\!]?)(:)\\s+('\"\")",
 			"beginCaptures": {
 				"1": { "name": "keyword.control" },
 				"2": { "name": "variable.other.property" },
@@ -92,7 +94,7 @@
 			]
 		},
 		"cel-single-quoted-name-value-pair": {
-			"begin": "^\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?]?)(:)\\s+(')",
+			"begin": "^\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?\\!]?)(:)\\s+(')",
 			"beginCaptures": {
 				"1": { "name": "keyword.control" },
 				"2": { "name": "variable.other.property" },
@@ -111,7 +113,7 @@
 			]
 		},
 		"cel-multiline-name-value-pair": {
-			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?]?)(:)\\s+>$",
+			"begin": "^\\s*[-]?\\s*(:)([a-zA-Z_][0-9a-zA-Z_]*)([\\?\\!]?)(:)\\s+>$",
 			"beginCaptures": {
 			  "1": { "name": "keyword.control" },
 			  "2": { "name": "variable.other.property" },
@@ -123,8 +125,31 @@
 			},
 			"patterns": [
 				{
-					"name": "source.cel",
+					"name": "hasflow.cel-multiline-name-value-pair",
 					"include": "source.cel"
+				}
+			]
+		},
+		"cel-multiline-name-value-pair-unescaped": 				{
+			"begin": "(?x)\n                        (?=\n                            (?x:\n                                  [^\\s[-?:,\\[\\]{}#&*!|>'\"%@`]]\n                                | [?:-] \\S\n                            )\n                            (\n                                  [^\\s:]\n                                | : \\S\n                                | \\s+ (?![#\\s])\n                            )*\n                            \\s*\n                            :\\s\n                        )\n                    ",
+			"end": "(?x)\n                        (?=\n                              \\s* $\n                            | \\s+ \\#\n                            | \\s* : \\s\n                        )\n                    ",
+			"patterns": [
+				{
+					"begin": "(?x)\n                                  :[^\\s[-?:,\\[\\]{}#&*!|>'\"%@`]]\n                                | :[?:-] \\S\n                            ",
+					"beginCaptures": {
+						"0": {
+							"name": "entity.name.tag.yaml"
+						}
+					},
+					"contentName": "entity.name.tag.yaml",
+					"end": "(?x)\n                                (?=\n                                      \\s* $\n                                    | \\s+ \\#\n                                    | \\s* : \\s\n                                )\n                            ",
+					"name": "string.unquoted.plain.out.yaml",
+					"patterns": [
+						{
+							"name": "hasflow.cel-multiline-name-value-pair",
+							"include": "source.cel"
+						}
+					]
 				}
 			]
 		}

@@ -244,8 +244,11 @@ export class HasflowRuntime extends EventEmitter {
 			this.debugProcess.on('exit', (code, signal) => {
 				if (code == null && signal == 'SIGTERM') {
 					this.sendEvent('message', 'Process exited normally');
+					this.sendEvent('end');
+					
 				} else {
-					this.sendEvent('message', 'Process exiting with code: ' + code + ' signal ' + signal);
+					this.sendEvent('terminatedError', 'Process exiting with code: ' + code + ' signal ' + signal);
+
 				}
 				resolve();
 			});
