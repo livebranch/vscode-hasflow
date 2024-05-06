@@ -105,6 +105,12 @@
 				]
 			},
 			{
+				"id": "hasflow.model",
+				"extensions": [
+					".model.yml.disabled"
+				]
+			},
+			{
 				"id": "hasflow.tests",
 				"extensions": [
 					".tests.yml.disabled"
@@ -200,6 +206,14 @@
 				"url": "https://hasflow.org/schemas/interface"
 			},
 			{
+				"fileMatch": "*.model.yml",
+				"url": "https://hasflow.org/schemas/model"
+			},
+			{
+				"fileMatch": "model.yml",
+				"url": "https://hasflow.org/schemas/model"
+			},
+			{
 				"fileMatch": "*.seed.yml",
 				"url": "https://hasflow.org/schemas/seeder"
 			},
@@ -256,12 +270,12 @@
 				"url": "https://hasflow.org/schemas/routes"
 			},
 			{
-				"fileMatch": "*.policy.yml",
-				"url": "https://hasflow.org/schemas/policy"
+				"fileMatch": "*.role.yml",
+				"url": "https://hasflow.org/schemas/role"
 			},
 			{
-				"fileMatch": "policy.yml",
-				"url": "https://hasflow.org/schemas/policy"
+				"fileMatch": "role.yml",
+				"url": "https://hasflow.org/schemas/role"
 			},
 			{
 				"fileMatch": "*.external.yml",
