@@ -132,6 +132,9 @@ export class HasflowDebugSession extends LoggingDebugSession {
 		this._runtime.on('ready', (text) => {
 			this.sendEvent(new OutputEvent(`${text}\n`, 'stdout'));
 		});
+		this._runtime.on('watchFile', (text) => {
+			this.sendEvent(new OutputEvent(`Updated: ${text}`, 'stdout'));
+		});
 		this._runtime.on('errorOut', (text) => {
 			this.sendEvent(new OutputEvent(`${text}\n`, 'stderr'));
 		});

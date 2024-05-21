@@ -166,6 +166,8 @@ export class HasflowRuntime extends EventEmitter {
 					if (found === null) {
 						if (str.startsWith('Ready') || str.includes('\nReady')) {
 							this.sendEvent('ready', str);
+						} else if (str.startsWith('Adding modified file:') || str.includes('\nAdding modified file:')) {
+							this.sendEvent('watchFile', str.replace('Adding modified file:', ''));
 						} else {
 							this.sendEvent('debugOut', str);
 						}
