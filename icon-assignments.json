@@ -100,6 +100,22 @@
 		"template.yml": "_hasflow_template",
 		"tests.yml": "_hasflow_tests",
 
+		"store": "_hasflow_store",
+		"etl": "_hasflow_etl",
+		"external": "_hasflow_external",
+		"iface": "_hasflow_iface",
+		"item": "_hasflow_item",
+		"migrate": "_hasflow_migrate",
+		"role": "_hasflow_role",
+		"model": "_hasflow_model",
+		"process": "_hasflow_process",
+		"provider": "_hasflow_provider",
+		"routes": "_hasflow_routes",
+		"seed": "_hasflow_seed",
+		"service": "_hasflow_service",
+		"template": "_hasflow_template",
+		"tests": "_hasflow_tests",
+
         "bash": "_shellscript",
         "bat": "_batch",
         "c": "_c",
@@ -213,6 +229,22 @@
 		"seed.yml": "_hasflow_seed",
 		"service.yml": "_hasflow_service",
 		"template.yml": "_hasflow_template",
-		"tests.yml": "_hasflow_tests"
+		"tests.yml": "_hasflow_tests",
+
+        "store": "_hasflow_store",
+		"etl": "_hasflow_etl",
+		"external": "_hasflow_external",
+		"iface": "_hasflow_iface",
+		"item": "_hasflow_item",
+		"migrate": "_hasflow_migrate",
+		"role": "_hasflow_role",
+		"model": "_hasflow_model",
+		"process": "_hasflow_process",
+		"provider": "_hasflow_provider",
+		"routes": "_hasflow_routes",
+		"seed": "_hasflow_seed",
+		"service": "_hasflow_service",
+		"template": "_hasflow_template",
+		"tests": "_hasflow_tests"
 	}
 }

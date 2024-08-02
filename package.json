@@ -80,6 +80,48 @@
 		],
 		"languages": [
 			{
+				"id": "yaml",
+				"extensions": [
+					".store",
+					".etl",
+					".external",
+					".iface",
+					".item",
+					".migrate",
+					".role",
+					".model",
+					".process",
+					".provider",
+					".routes",
+					".seed",
+					".service",
+					".template",
+					".tests"
+				],
+				"filenames": [
+					"store",
+					"etl",
+					"external",
+					"iface",
+					"item",
+					"migrate",
+					"role",
+					"model",
+					"process",
+					"provider",
+					"routes",
+					"seed",
+					"service",
+					"template",
+					"tests"
+				],
+				"aliases": [
+          "Hasflow Source"
+        ]
+			},
+
+
+			{
 				"id": "item.hasflow.yaml",
 				"extensions": [
 					".item.yml.disabled"
@@ -327,6 +369,148 @@
 			},
 			{
 				"fileMatch": "provider.yml",
+				"url": "https://hasflow.org/schemas/provider"
+			},
+
+
+			{
+				"fileMatch": "*.item",
+				"url": "https://hasflow.org/schemas/exposure"
+			},
+			{
+				"fileMatch": "item",
+				"url": "https://hasflow.org/schemas/exposure"
+			},
+			{
+				"fileMatch": "*.iface",
+				"url": "https://hasflow.org/schemas/interface"
+			},
+			{
+				"fileMatch": "iface",
+				"url": "https://hasflow.org/schemas/interface"
+			},
+			{
+				"fileMatch": "*.model",
+				"url": "https://hasflow.org/schemas/model"
+			},
+			{
+				"fileMatch": "model",
+				"url": "https://hasflow.org/schemas/model"
+			},
+			{
+				"fileMatch": "*.seed",
+				"url": "https://hasflow.org/schemas/seeder"
+			},
+			{
+				"fileMatch": "seed",
+				"url": "https://hasflow.org/schemas/seeder"
+			},
+			{
+				"fileMatch": "*.process",
+				"url": "https://hasflow.org/schemas/processor"
+			},
+			{
+				"fileMatch": "process",
+				"url": "https://hasflow.org/schemas/processor"
+			},
+			{
+				"fileMatch": "*.service",
+				"url": "https://hasflow.org/schemas/service"
+			},
+			{
+				"fileMatch": "service",
+				"url": "https://hasflow.org/schemas/service"
+			},
+			{
+				"fileMatch": "*.store",
+				"url": "https://hasflow.org/schemas/store"
+			},
+			{
+				"fileMatch": "store",
+				"url": "https://hasflow.org/schemas/store"
+			},
+			{
+				"fileMatch": "*.tests",
+				"url": "https://hasflow.org/schemas/tests"
+			},
+			{
+				"fileMatch": "tests",
+				"url": "https://hasflow.org/schemas/tests"
+			},
+			{
+				"fileMatch": "*.template",
+				"url": "https://hasflow.org/schemas/template"
+			},
+			{
+				"fileMatch": "template",
+				"url": "https://hasflow.org/schemas/template"
+			},
+			{
+				"fileMatch": "*.routes",
+				"url": "https://hasflow.org/schemas/routes"
+			},
+			{
+				"fileMatch": "routes",
+				"url": "https://hasflow.org/schemas/routes"
+			},
+			{
+				"fileMatch": "*.role",
+				"url": "https://hasflow.org/schemas/role"
+			},
+			{
+				"fileMatch": "role",
+				"url": "https://hasflow.org/schemas/role"
+			},
+			{
+				"fileMatch": "*.external",
+				"url": "https://hasflow.org/schemas/external"
+			},
+			{
+				"fileMatch": "external",
+				"url": "https://hasflow.org/schemas/external"
+			},
+			{
+				"fileMatch": "*.etl",
+				"url": "https://hasflow.org/schemas/etl"
+			},
+			{
+				"fileMatch": "etl",
+				"url": "https://hasflow.org/schemas/etl"
+			},
+			{
+				"fileMatch": "*.migrate",
+				"url": "https://hasflow.org/schemas/migration"
+			},
+			{
+				"fileMatch": "migrate",
+				"url": "https://hasflow.org/schemas/migration"
+			},
+			{
+				"fileMatch": "*.iface",
+				"url": "https://hasflow.org/schemas/interface"
+			},
+			{
+				"fileMatch": "iface",
+				"url": "https://hasflow.org/schemas/interface"
+			},
+			{
+				"fileMatch": "*.query",
+				"url": "https://hasflow.org/schemas/query"
+			},
+			{
+				"fileMatch": "iface",
+				"url": "https://hasflow.org/schemas/interface"
+			},
+			{
+				"fileMatch": "site",
+				"url": "https://hasflow.org/schemas/site"
+			},
+			{
+				"fileMatch": "*.provider",
+				"url": "https://hasflow.org/schemas/provider"
+			},
+			{
+				"fileMatch": "provider",
 				"url": "https://hasflow.org/schemas/provider"
 			}
 		],

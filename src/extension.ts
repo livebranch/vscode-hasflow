@@ -30,6 +30,15 @@ import {
 	// ShellExecution,
 	// TaskScope,
 	// TaskRevealKind,
+	TextDocument,
+	Position,
+	CompletionContext,
+	CompletionItem,
+	SnippetString,
+	MarkdownString,
+	CompletionItemKind,
+	languages,
+
 } from 'vscode';
 import { FileAccessor } from './hasflowRuntime';
 
@@ -59,7 +68,53 @@ export function activate(context: ExtensionContext) {
 			return debug.startDebugging(workspaceFolder, config);
 		})
 	);
-	
+
+	// Function autocompletion
+	console.log('Activated! :-D')
+
+	const completionProvider = languages.registerCompletionItemProvider('yaml', {
+		provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext) {
+
+			console.log('Triggered inner! :-D')
+
+			// a simple completion item which inserts `Hello World!`
+			const simpleCompletion = new CompletionItem('Hello World!');
+
+			// a completion item that inserts its text as snippet,
+			// the `insertText`-property is a `SnippetString` which will be
+			// honored by the editor.
+			const snippetCompletion = new CompletionItem('Good part of the day');
+			snippetCompletion.insertText = new SnippetString('Good ${1|morning,afternoon,evening|}. It is ${1}, right?');
+			const docs: any = new MarkdownString("Inserts a snippet that lets you select [link](x.ts).");
+			snippetCompletion.documentation = docs;
+			docs.baseUri = Uri.parse('http://example.com/a/b/c/');
+
+			// a completion item that can be accepted by a commit character,
+			// the `commitCharacters`-property is set which means that the completion will
+			// be inserted and then the character will be typed.
+			const commitCharacterCompletion = new CompletionItem('console');
+			commitCharacterCompletion.commitCharacters = ['.'];
+			commitCharacterCompletion.documentation = new MarkdownString('Press `.` to get `console.`');
+
+			// a completion item that retriggers IntelliSense when being accepted,
+			// the `command`-property is set which the editor will execute after 
+			// completion has been inserted. Also, the `insertText` is set so that 
+			// a space is inserted after `new`
+			const commandCompletion = new CompletionItem('new');
+			commandCompletion.kind = CompletionItemKind.Keyword;
+			commandCompletion.insertText = 'new ';
+			commandCompletion.command = { command: 'editor.action.triggerSuggest', title: 'Re-trigger completions...' };
+
+			// return all completion items as array
+			return [
+				simpleCompletion,
+				snippetCompletion,
+				commitCharacterCompletion,
+				commandCompletion
+			];
+		}
+	});
+	context.subscriptions.push(completionProvider);
 }
 
 class HasflowConfigurationProvider implements DebugConfigurationProvider {
@@ -106,6 +161,8 @@ class HasflowConfigurationProvider implements DebugConfigurationProvider {
 					config.request = 'launch';
  					if (os.platform() == "win32") {
  						config.debugger = 'hasflow.exe';
+						// Remove leading '/' from program path
+						config.program = folder?.uri.path.replace(/^\//g, '')
  					} else {
  						config.debugger = 'hasflow';
  					}

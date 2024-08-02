@@ -13,6 +13,7 @@ import { DebugProtocol } from 'vscode-debugprotocol';
 import { basename } from 'path';
 import { HasflowRuntime, IRuntimeBreakpoint, FileAccessor, IRuntimeVariable, timeout, IRuntimeVariableType } from './hasflowRuntime';
 import { Subject } from 'await-notify';
+import * as os from 'os';
 
 /**
  * This interface describes the hasflow specific launch attributes
@@ -269,8 +270,14 @@ export class HasflowDebugSession extends LoggingDebugSession {
 				env["HF_BUNDLE_PATH"] = this._projectRoot
 			}
 		}
-
 		env["HF_PROJECT_ROOT"] = this._projectRoot
+
+		if (os.platform() == "win32") {
+			// Get rid of any unix '/' prefix
+			env["HF_BUNDLE_PATH"] = env["HF_BUNDLE_PATH"]?.replace(/^\//g,'')
+			env["HF_PROJECT_ROOT"] = env["HF_PROJECT_ROOT"]?.replace(/^\//g,'')
+		}
+
 
 		// make sure to 'Stop' the buffered logging if 'trace' is not set
 		logger.setup(args.trace ? Logger.LogLevel.Verbose : Logger.LogLevel.Stop, false);
