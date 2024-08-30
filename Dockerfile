@@ -5,7 +5,7 @@ ENV OPENVSCODE_SERVER_ROOT="/home/.openvscode-server"
 ENV OPENVSCODE="${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server"
 
 ARG CONNECTION_TOKEN="MYTOKEN"
-ARG REMOTE_REPO="MYREPO"
+ARG REMOTE_REPO=""
 
 SHELL ["/bin/bash", "-c"]
 RUN \
@@ -33,7 +33,7 @@ RUN \
     && curl https://hasflow.org/dist/linux-x86-0.8/hasflow -o ./hasflow && chmod +x ./hasflow && sudo mv ./hasflow /usr/local/bin/hasflow \
     # Install AWS
     && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install \
-    && cd /home/workspace && git clone "$REMOTE_REPO"
+    && cd /home/workspace && if [ -z "${REMOTE_REPO}" ]; then git clone "${REMOTE_REPO}"; fi
 
 # ENTRYPOINT [ "/bin/sh", "-c", "exec ${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server --host localhost --port 3000 \"${@}\"", "--" ]
 ENTRYPOINT [ "/bin/sh", "-c", "exec ${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server --host 0.0.0.0 --connection-token \"$CONNECTION_TOKEN\" \"${@}\"", "--" ]
