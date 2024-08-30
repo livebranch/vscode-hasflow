@@ -4,10 +4,11 @@ FROM gitpod/openvscode-server:latest
 ENV OPENVSCODE_SERVER_ROOT="/home/.openvscode-server"
 ENV OPENVSCODE="${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server"
 
-ARG CONNECTION_TOKEN="MYTOKEN"
-ARG REMOTE_REPO=""
-
 SHELL ["/bin/bash", "-c"]
+
+ARG CONNECTION_TOKEN="MYTOKEN"
+ARG REMOTE_REPO
+
 RUN \
     # Direct download links to external .vsix not available on https://open-vsx.org/
     # The two links here are just used as example, they are actually available on https://open-vsx.org/
@@ -33,7 +34,7 @@ RUN \
     && curl https://hasflow.org/dist/linux-x86-0.8/hasflow -o ./hasflow && chmod +x ./hasflow && sudo mv ./hasflow /usr/local/bin/hasflow \
     # Install AWS
     && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install \
-    && cd /home/workspace && if [ -z "${REMOTE_REPO}" ]; then git clone "${REMOTE_REPO}"; fi
+    && cd /home/workspace && if [ -n "${REMOTE_REPO}" ]; then git clone "${REMOTE_REPO}"; fi
 
 # ENTRYPOINT [ "/bin/sh", "-c", "exec ${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server --host localhost --port 3000 \"${@}\"", "--" ]
 ENTRYPOINT [ "/bin/sh", "-c", "exec ${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server --host 0.0.0.0 --connection-token \"$CONNECTION_TOKEN\" \"${@}\"", "--" ]
