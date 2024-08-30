@@ -353,7 +353,7 @@
 			},
 			{
 				"fileMatch": "*.query.yml",
-				"url": "https://hasflow.org/schemas/query"
+				"url": "https://hasflow.org/schemas/queryFile"
 			},
 			{
 				"fileMatch": "iface.yml",
@@ -495,7 +495,7 @@
 			},
 			{
 				"fileMatch": "*.query",
-				"url": "https://hasflow.org/schemas/query"
+				"url": "https://hasflow.org/schemas/queryFile"
 			},
 			{
 				"fileMatch": "iface",
