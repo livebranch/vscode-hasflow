@@ -4,6 +4,9 @@ FROM gitpod/openvscode-server:latest
 ENV OPENVSCODE_SERVER_ROOT="/home/.openvscode-server"
 ENV OPENVSCODE="${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server"
 
+# For Quasar
+ENV NODE_VERSION=18.19.1
+
 SHELL ["/bin/bash", "-c"]
 
 ARG CONNECTION_TOKEN="MYTOKEN"
@@ -30,17 +33,38 @@ RUN \
         "${tdir}"/* \
     )\
     # Install the $exts
-    && for ext in "${exts[@]}"; do ${OPENVSCODE} --install-extension "${ext}"; done \
-    # Install some dependancies
-    && sudo apt update && sudo apt install -y ssh-client unzip \
-    # Install Hasflow
-    && curl https://hasflow.org/dist/linux-x86-0.8/hasflow -o ./hasflow && chmod +x ./hasflow && sudo mv ./hasflow /usr/local/bin/hasflow \
-    # Get .env and .env.testing
-    && curl https://hasflow.org/dist/docker-envs/.env -o /tmp/docker.env \
-    && curl https://hasflow.org/dist/docker-envs/.env.testing -o /tmp/docker.env.testing \
-    # Install AWS
-    && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install
+    && for ext in "${exts[@]}"; do ${OPENVSCODE} --install-extension "${ext}"; done
 
+# Install some dependancies
+RUN sudo apt update && sudo apt install -y ssh-client unzip
+# Install Hasflow
+RUN curl https://hasflow.org/dist/linux-x86-0.8/hasflow -o ./hasflow && chmod +x ./hasflow && sudo mv ./hasflow /usr/local/bin/hasflow
+
+# Install node
+ENV NVM_DIR /home/openvscode-server/.nvm
+ENV NPM_DIR /home/openvscode-server/.npm
+ENV YARN_DIR /home/openvscode-server/.yarn
+RUN mkdir -p "${NVM_DIR}"
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
+ENV PATH="$NVM_DIR/versions/node/v${NODE_VERSION}/bin/:$NPM_DIR/bin/:${PATH}"
+
+# Install yarn + quasar
+RUN npm config set prefix "${NPM_DIR}"
+RUN npm install -g yarn
+RUN yarn config set global-folder "${YARN_DIR}"
+RUN yarn global add @quasar/cli
+
+# Get .env and .env.testing
+RUN curl https://hasflow.org/dist/docker-envs/.env -o /tmp/docker.env \
+&& curl https://hasflow.org/dist/docker-envs/.env.testing -o /tmp/docker.env.testing
+
+# Install AWS
+# RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install
+
+   
 # ENTRYPOINT [ "/bin/sh", "-c", "exec ${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server --host localhost --port 3000 \"${@}\"", "--" ]
-ENTRYPOINT [ "/bin/bash", "-c", "cd /home/workspace && if [ ! -d \"${LOCAL_REPO}\" ] ; then git clone $REMOTE_REPO $LOCAL_REPO; cd $LOCAL_REPO && cp /tmp/docker.env ./.env && sed -i -e \"s/INSERT_KEY/\$(hasflow --key)/g\" ./.env && cp /tmp/docker.env.testing ./.env.testing && sed -i -e \"s/INSERT_KEY/\$(hasflow --key)/g\" ./.env.testing; else cd \"${LOCAL_REPO}\" && git pull \"${REMOTE_REPO}\"; fi && exec ${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server --host 0.0.0.0 --connection-token \"$CONNECTION_TOKEN\" \"${@}\"", "--" ]
+ENTRYPOINT [ "/bin/bash", "-c", "cd /home/workspace && if [ ! -d \"${LOCAL_REPO}\" ] ; then git clone \"${REMOTE_REPO}\" \"${LOCAL_REPO}\"; cd \"${LOCAL_REPO}\" && cp /tmp/docker.env ./.env && sed -i -e \"s|INSERT_KEY|$(hasflow --key)|g\" ./.env && cp /tmp/docker.env.testing ./.env.testing && sed -i -e \"s|INSERT_KEY|$(hasflow --key)|g\" ./.env.testing; else cd \"${LOCAL_REPO}\" && git pull \"${REMOTE_REPO}\"; fi && exec ${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server --host 0.0.0.0 --connection-token \"$CONNECTION_TOKEN\" \"${@}\"", "--" ]
 EXPOSE 3000
