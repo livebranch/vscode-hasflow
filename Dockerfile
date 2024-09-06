@@ -42,5 +42,5 @@ RUN \
     && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install
 
 # ENTRYPOINT [ "/bin/sh", "-c", "exec ${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server --host localhost --port 3000 \"${@}\"", "--" ]
-ENTRYPOINT [ "/bin/bash", "-c", "cd /home/workspace && if [ ! -d \"${LOCAL_REPO}\" ] ; then git clone $REMOTE_REPO $LOCAL_REPO; cd $LOCAL_REPO && cp /tmp/docker.env ./.env && sed -i -e \"s/INSERT_KEY/$(hasflow --key)/g\" ./.env && cp /tmp/docker.env.testing ./.env.testing && sed -i -e \"s/INSERT_KEY/$(hasflow --key)/g\" ./.env.testing; else cd \"${LOCAL_REPO}\" && git pull \"${REMOTE_REPO}\"; fi && exec ${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server --host 0.0.0.0 --connection-token \"$CONNECTION_TOKEN\" \"${@}\"", "--" ]
+ENTRYPOINT [ "/bin/bash", "-c", "cd /home/workspace && if [ ! -d \"${LOCAL_REPO}\" ] ; then git clone $REMOTE_REPO $LOCAL_REPO; cd $LOCAL_REPO && cp /tmp/docker.env ./.env && sed -i -e \"s/INSERT_KEY/\$(hasflow --key)/g\" ./.env && cp /tmp/docker.env.testing ./.env.testing && sed -i -e \"s/INSERT_KEY/\$(hasflow --key)/g\" ./.env.testing; else cd \"${LOCAL_REPO}\" && git pull \"${REMOTE_REPO}\"; fi && exec ${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server --host 0.0.0.0 --connection-token \"$CONNECTION_TOKEN\" \"${@}\"", "--" ]
 EXPOSE 3000
