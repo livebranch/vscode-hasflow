@@ -34,9 +34,9 @@ import {
 	Position,
 	CompletionContext,
 	CompletionItem,
-	SnippetString,
-	MarkdownString,
-	CompletionItemKind,
+	// SnippetString,
+	// MarkdownString,
+	// CompletionItemKind,
 	languages,
 
 } from 'vscode';
@@ -70,51 +70,69 @@ export function activate(context: ExtensionContext) {
 	);
 
 	// Function autocompletion
-	console.log('Activated! :-D')
+	// console.log('Activated! :-D')
 
 	const completionProvider = languages.registerCompletionItemProvider('yaml', {
 		provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext) {
 
-			console.log('Triggered inner! :-D')
+
+			var completionItems = Array<CompletionItem>()
 
 			// a simple completion item which inserts `Hello World!`
-			const simpleCompletion = new CompletionItem('Hello World!');
+			// const simpleCompletion = new CompletionItem('Hello World!');
+
+			if (document.fileName.endsWith('process') || document.fileName.endsWith('process.yml') || document.fileName.endsWith('process.yaml')) {
+				const httpPostCompletion = new CompletionItem('Sample HTTP Process');
+				var httpPostText =
+					'aux:\n' +
+					'  url: URLParams(./url.iface)\n' +
+					'  query: URLQuery(./query.iface)\n' +
+					'  body: OneJSONPath(./body.iface)\n' +
+					'isOne: ./item(query, body)\n' +
+					'query:\n' +
+					'  where: meta.id\n' +
+					'  :equals: url.id\n' +
+					'output:\n' +
+					'  result:\n' +
+					'    //http/data.process' +
+					'  error:\n' +
+					'    //http/error.process'
+
+				httpPostCompletion.insertText = httpPostText
+				completionItems.push(httpPostCompletion)
+			}
 
 			// a completion item that inserts its text as snippet,
 			// the `insertText`-property is a `SnippetString` which will be
 			// honored by the editor.
-			const snippetCompletion = new CompletionItem('Good part of the day');
-			snippetCompletion.insertText = new SnippetString('Good ${1|morning,afternoon,evening|}. It is ${1}, right?');
-			const docs: any = new MarkdownString("Inserts a snippet that lets you select [link](x.ts).");
-			snippetCompletion.documentation = docs;
-			docs.baseUri = Uri.parse('http://example.com/a/b/c/');
+			// const snippetCompletion = new CompletionItem('Good part of the day');
+			// snippetCompletion.insertText = new SnippetString('Good ${1|morning,afternoon,evening|}. It is ${1}, right?'  + context.triggerCharacter + ':::' + context.triggerKind.toString() + document.getText());
+			// const docs: any = new MarkdownString("Inserts a snippet that lets you select [link](x.ts).");
+			// snippetCompletion.documentation = docs;
+			// docs.baseUri = Uri.parse('http://example.com/a/b/c/');
 
-			// a completion item that can be accepted by a commit character,
-			// the `commitCharacters`-property is set which means that the completion will
-			// be inserted and then the character will be typed.
-			const commitCharacterCompletion = new CompletionItem('console');
-			commitCharacterCompletion.commitCharacters = ['.'];
-			commitCharacterCompletion.documentation = new MarkdownString('Press `.` to get `console.`');
+			// // a completion item that can be accepted by a commit character,
+			// // the `commitCharacters`-property is set which means that the completion will
+			// // be inserted and then the character will be typed.
+			// const commitCharacterCompletion = new CompletionItem('console');
+			// commitCharacterCompletion.commitCharacters = ['.'];
+			// commitCharacterCompletion.documentation = new MarkdownString('Press `.` to get `console.`');
 
-			// a completion item that retriggers IntelliSense when being accepted,
-			// the `command`-property is set which the editor will execute after 
-			// completion has been inserted. Also, the `insertText` is set so that 
-			// a space is inserted after `new`
-			const commandCompletion = new CompletionItem('new');
-			commandCompletion.kind = CompletionItemKind.Keyword;
-			commandCompletion.insertText = 'new ';
-			commandCompletion.command = { command: 'editor.action.triggerSuggest', title: 'Re-trigger completions...' };
+			// // a completion item that retriggers IntelliSense when being accepted,
+			// // the `command`-property is set which the editor will execute after 
+			// // completion has been inserted. Also, the `insertText` is set so that 
+			// // a space is inserted after `new`
+			// const commandCompletion = new CompletionItem('new');
+			// commandCompletion.kind = CompletionItemKind.Keyword;
+			// commandCompletion.insertText = 'new ';
+			// commandCompletion.command = { command: 'editor.action.triggerSuggest', title: 'Re-trigger completions...' };
 
 			// return all completion items as array
-			return [
-				simpleCompletion,
-				snippetCompletion,
-				commitCharacterCompletion,
-				commandCompletion
-			];
+			return completionItems;
 		}
 	});
 	context.subscriptions.push(completionProvider);
+	// commands.executeCommand("identifier.hasflow");
 }
 
 class HasflowConfigurationProvider implements DebugConfigurationProvider {

@@ -68,7 +68,9 @@
 		"onDebugResolve:hasflow",
 		"onDebugDynamicConfigurations:hasflow",
 		"workspaceContains:**/site.yml",
-		"onLanguage:hasflow"
+		"workspaceContains:**/process",
+		"onLanguage:hasflow",
+		"onLanguage:yaml"
 	],
 	"contributes": {
 		"iconThemes": [
@@ -96,7 +98,8 @@
 					".seed",
 					".service",
 					".template",
-					".tests"
+					".tests",
+					".query"
 				],
 				"filenames": [
 					"store",
@@ -113,7 +116,8 @@
 					"seed",
 					"service",
 					"template",
-					"tests"
+					"tests",
+					"query"
 				],
 				"aliases": [
           "Hasflow Source"
@@ -495,6 +499,10 @@
 			},
 			{
 				"fileMatch": "*.query",
+				"url": "https://hasflow.org/schemas/queryFile"
+			},
+			{
+				"fileMatch": "query",
 				"url": "https://hasflow.org/schemas/queryFile"
 			},
 			{

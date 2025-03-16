@@ -15,6 +15,7 @@
 		"_hasflow_service": {"iconPath": "./fileicons/hasflow-service.svg"},
 		"_hasflow_template": {"iconPath": "./fileicons/hasflow-template.svg"},
 		"_hasflow_tests": {"iconPath": "./fileicons/hasflow-tests.svg"},
+		"_hasflow_query": {"iconPath": "./fileicons/hasflow-service.svg"},
 		// Other common formats courtesy of github.com/jamesmaguire/vscode-easy-icons
         "_apple": {"iconPath": "./fileicons/contrib/apple.svg"},
         "_batch": {"iconPath": "./fileicons/contrib/batch.svg"},
@@ -99,6 +100,7 @@
 		"service.yml": "_hasflow_service",
 		"template.yml": "_hasflow_template",
 		"tests.yml": "_hasflow_tests",
+		"query.yml": "_hasflow_query",
 
 		"store": "_hasflow_store",
 		"etl": "_hasflow_etl",
@@ -115,6 +117,7 @@
 		"service": "_hasflow_service",
 		"template": "_hasflow_template",
 		"tests": "_hasflow_tests",
+		"query": "_hasflow_query",
 
         "bash": "_shellscript",
         "bat": "_batch",
@@ -230,6 +233,7 @@
 		"service.yml": "_hasflow_service",
 		"template.yml": "_hasflow_template",
 		"tests.yml": "_hasflow_tests",
+		"query.yml": "_hasflow_query",
 
         "store": "_hasflow_store",
 		"etl": "_hasflow_etl",
@@ -245,6 +249,7 @@
 		"seed": "_hasflow_seed",
 		"service": "_hasflow_service",
 		"template": "_hasflow_template",
-		"tests": "_hasflow_tests"
+		"tests": "_hasflow_tests",
+		"query": "_hasflow_query"
 	}
 }
